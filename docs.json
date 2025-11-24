@@ -84,11 +84,6 @@
           "icon": "chart-line"
         },
         {
-          "anchor": "GitHub",
-          "href": "https://github.com/orcho-ai",
-          "icon": "github"
-        },
-        {
           "anchor": "Support",
           "href": "mailto:support@orcho.ai",
           "icon": "envelope"
@@ -97,7 +92,7 @@
     }
   },
   "logo": {
-    "light": "/logo/light.svg",
+    "light": "/logo/light.png",
     "dark": "/logo/dark.svg"
   },
   "navbar": {
