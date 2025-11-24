@@ -1,16 +1,26 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "OpenAPI Plant Store",
-    "description": "A sample API that uses a plant store as an example to demonstrate features in the OpenAPI specification",
-    "license": {
-      "name": "MIT"
+    "title": "Orcho Risk Intelligence API",
+    "description": "Real-time AI risk assessment API. Score AI tasks 0-100 before execution to confidently automate high-stakes operations.",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Orcho Support",
+      "email": "support@orcho.ai",
+      "url": "https://orcho.ai"
     },
-    "version": "1.0.0"
+    "license": {
+      "name": "Proprietary"
+    }
   },
   "servers": [
     {
-      "url": "http://sandbox.mintlify.com"
+      "url": "https://api.orcho.ai/v1",
+      "description": "Production"
+    },
+    {
+      "url": "https://sandbox.orcho.ai/v1",
+      "description": "Sandbox"
     }
   ],
   "security": [
@@ -19,36 +29,96 @@
     }
   ],
   "paths": {
-    "/plants": {
-      "get": {
-        "description": "Returns all plants from the system that the user has access to",
-        "parameters": [
-          {
-            "name": "limit",
-            "in": "query",
-            "description": "The maximum number of results to return",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
+    "/risk/assess": {
+      "post": {
+        "summary": "Generate Risk Score",
+        "description": "Assess the risk of an AI task before execution. Returns a risk score from 0-100 with detailed breakdown.",
+        "operationId": "generateRiskScore",
+        "tags": ["Risk Assessment"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RiskAssessmentRequest"
+              },
+              "examples": {
+                "production_deployment": {
+                  "summary": "Production deployment",
+                  "value": {
+                    "task_description": "Deploy code to production",
+                    "context": {
+                      "environment": "production",
+                      "user_role": "developer",
+                      "time_of_day": "3:47 AM"
+                    }
+                  }
+                },
+                "payment_refund": {
+                  "summary": "Payment refund",
+                  "value": {
+                    "task_description": "Process $10,000 refund",
+                    "context": {
+                      "amount": 10000,
+                      "currency": "USD",
+                      "user_role": "support_agent"
+                    }
+                  }
+                }
+              }
             }
           }
-        ],
+        },
         "responses": {
           "200": {
-            "description": "Plant response",
+            "description": "Risk assessment completed successfully",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Plant"
+                  "$ref": "#/components/schemas/RiskAssessmentResponse"
+                },
+                "examples": {
+                  "high_risk": {
+                    "summary": "High risk task",
+                    "value": {
+                      "risk_score": 85,
+                      "confidence": 0.92,
+                      "breakdown": {
+                        "impact": "high",
+                        "probability": "medium",
+                        "factors": [
+                          "Production environment",
+                          "No code review",
+                          "Outside business hours"
+                        ]
+                      },
+                      "recommendation": "Require human review before execution",
+                      "timestamp": "2025-11-24T15:30:00Z"
+                    }
+                  },
+                  "low_risk": {
+                    "summary": "Low risk task",
+                    "value": {
+                      "risk_score": 23,
+                      "confidence": 0.88,
+                      "breakdown": {
+                        "impact": "low",
+                        "probability": "low",
+                        "factors": [
+                          "Standard operation",
+                          "Within normal parameters"
+                        ]
+                      },
+                      "recommendation": "Safe to proceed automatically",
+                      "timestamp": "2025-11-24T15:30:00Z"
+                    }
                   }
                 }
               }
             }
           },
           "400": {
-            "description": "Unexpected error",
+            "description": "Bad request",
             "content": {
               "application/json": {
                 "schema": {
@@ -56,35 +126,29 @@
                 }
               }
             }
-          }
-        }
-      },
-      "post": {
-        "description": "Creates a new plant in the store",
-        "requestBody": {
-          "description": "Plant to add to the store",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/NewPlant"
-              }
-            }
           },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "plant response",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Plant"
+                  "$ref": "#/components/schemas/Error"
                 }
               }
             }
           },
-          "400": {
-            "description": "unexpected error",
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
             "content": {
               "application/json": {
                 "schema": {
@@ -96,28 +160,62 @@
         }
       }
     },
-    "/plants/{id}": {
-      "delete": {
-        "description": "Deletes a single plant based on the ID supplied",
+    "/risk/history": {
+      "get": {
+        "summary": "Get Risk Score History",
+        "description": "Retrieve historical risk assessments",
+        "operationId": "getRiskHistory",
+        "tags": ["Risk Assessment"],
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "description": "ID of plant to delete",
-            "required": true,
+            "name": "limit",
+            "in": "query",
+            "description": "Maximum number of results to return",
             "schema": {
               "type": "integer",
-              "format": "int64"
+              "default": 10,
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "Number of results to skip",
+            "schema": {
+              "type": "integer",
+              "default": 0,
+              "minimum": 0
             }
           }
         ],
         "responses": {
-          "204": {
-            "description": "Plant deleted",
-            "content": {}
+          "200": {
+            "description": "Risk history retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "assessments": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/RiskAssessmentResponse"
+                      }
+                    },
+                    "total": {
+                      "type": "integer"
+                    },
+                    "has_more": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
           },
-          "400": {
-            "description": "unexpected error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "application/json": {
                 "schema": {
@@ -128,25 +226,313 @@
           }
         }
       }
-    }
-  },
-  "webhooks": {
-    "/plant/webhook": {
+    },
+    "/dependency-graph/generate": {
       "post": {
-        "description": "Information about a new plant added to the store",
+        "summary": "Generate Dependency Graph",
+        "description": "Generate a dependency graph for code or workflow analysis",
+        "operationId": "generateDependencyGraph",
+        "tags": ["Dependency Graphs"],
         "requestBody": {
-          "description": "Plant added to the store",
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/NewPlant"
+                "$ref": "#/components/schemas/DependencyGraphRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Return a 200 status to indicate that the data was received successfully"
+            "description": "Dependency graph generated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DependencyGraphResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dependency-graph/{graph_id}": {
+      "get": {
+        "summary": "View Dependency Graph",
+        "description": "Retrieve a specific dependency graph by ID",
+        "operationId": "viewDependencyGraph",
+        "tags": ["Dependency Graphs"],
+        "parameters": [
+          {
+            "name": "graph_id",
+            "in": "path",
+            "required": true,
+            "description": "ID of the dependency graph",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Dependency graph retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DependencyGraphResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Graph not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dependency-graph/list": {
+      "get": {
+        "summary": "List Dependency Graphs",
+        "description": "Get all dependency graphs for the project",
+        "operationId": "listDependencyGraphs",
+        "tags": ["Dependency Graphs"],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Graphs retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "graphs": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/DependencyGraphResponse"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/aiignore": {
+      "get": {
+        "summary": "Get AI Ignore List",
+        "description": "Retrieve current AI ignore rules",
+        "operationId": "getAIIgnoreList",
+        "tags": ["AI Ignore"],
+        "responses": {
+          "200": {
+            "description": "Ignore list retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AIIgnoreListResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/aiignore/add": {
+      "post": {
+        "summary": "Add AI Ignore Rule",
+        "description": "Add a new pattern to the AI ignore list",
+        "operationId": "addAIIgnoreRule",
+        "tags": ["AI Ignore"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AIIgnoreAddRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Rule added successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AIIgnoreListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid pattern",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/aiignore/remove": {
+      "delete": {
+        "summary": "Remove AI Ignore Rule",
+        "description": "Remove a pattern from the AI ignore list",
+        "operationId": "removeAIIgnoreRule",
+        "tags": ["AI Ignore"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AIIgnoreRemoveRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Rule removed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AIIgnoreListResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/features/weights": {
+      "get": {
+        "summary": "Get Feature Weights",
+        "description": "Retrieve all feature weights used in risk calculation",
+        "operationId": "getFeatureWeights",
+        "tags": ["Feature Weights"],
+        "responses": {
+          "200": {
+            "description": "Feature weights retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FeatureWeightsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/features/{feature_id}/weight": {
+      "patch": {
+        "summary": "Update Feature Weight",
+        "description": "Update the weight of a specific feature",
+        "operationId": "updateFeatureWeight",
+        "tags": ["Feature Weights"],
+        "parameters": [
+          {
+            "name": "feature_id",
+            "in": "path",
+            "required": true,
+            "description": "ID of the feature to update",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateFeatureWeightRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Feature weight updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FeatureWeightResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid weight value",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Feature not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         }
       }
@@ -154,55 +540,238 @@
   },
   "components": {
     "schemas": {
-      "Plant": {
-        "required": [
-          "name"
-        ],
+      "RiskAssessmentRequest": {
         "type": "object",
+        "required": ["task_description"],
         "properties": {
-          "name": {
-            "description": "The name of the plant",
-            "type": "string"
+          "task_description": {
+            "type": "string",
+            "description": "Description of the AI task to assess",
+            "example": "Deploy code to production"
           },
-          "tag": {
-            "description": "Tag to specify the type",
-            "type": "string"
+          "context": {
+            "type": "object",
+            "description": "Additional context for risk assessment",
+            "properties": {
+              "environment": {
+                "type": "string",
+                "example": "production"
+              },
+              "user_role": {
+                "type": "string",
+                "example": "developer"
+              },
+              "time_of_day": {
+                "type": "string",
+                "example": "3:47 AM"
+              }
+            }
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Optional metadata for tracking",
+            "additionalProperties": true
           }
         }
       },
-      "NewPlant": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Plant"
-          },
-          {
-            "required": [
-              "id"
-            ],
-            "type": "object",
-            "properties": {
-              "id": {
-                "description": "Identification number of the plant",
-                "type": "integer",
-                "format": "int64"
-              }
-            }
-          }
-        ]
-      },
-      "Error": {
-        "required": [
-          "error",
-          "message"
-        ],
+      "RiskAssessmentResponse": {
         "type": "object",
         "properties": {
-          "error": {
+          "risk_score": {
             "type": "integer",
-            "format": "int32"
+            "minimum": 0,
+            "maximum": 100,
+            "description": "Risk score from 0 (safe) to 100 (dangerous)"
+          },
+          "confidence": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "Confidence level of the assessment"
+          },
+          "breakdown": {
+            "type": "object",
+            "properties": {
+              "impact": {
+                "type": "string",
+                "enum": ["low", "medium", "high"],
+                "description": "Potential impact if task fails"
+              },
+              "probability": {
+                "type": "string",
+                "enum": ["low", "medium", "high"],
+                "description": "Probability of failure"
+              },
+              "factors": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Key risk factors identified"
+              }
+            }
+          },
+          "recommendation": {
+            "type": "string",
+            "description": "Recommended action based on risk score"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp of assessment"
+          }
+        }
+      },
+      "DependencyGraphRequest": {
+        "type": "object",
+        "required": ["source"],
+        "properties": {
+          "source": {
+            "type": "string",
+            "description": "Source code or workflow to analyze"
+          },
+          "language": {
+            "type": "string",
+            "description": "Programming language",
+            "example": "python"
+          }
+        }
+      },
+      "DependencyGraphResponse": {
+        "type": "object",
+        "properties": {
+          "graph_id": {
+            "type": "string",
+            "description": "Unique identifier for the graph"
+          },
+          "nodes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "label": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "edges": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "from": {
+                  "type": "string"
+                },
+                "to": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AIIgnoreListResponse": {
+        "type": "object",
+        "properties": {
+          "patterns": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of ignored patterns"
+          }
+        }
+      },
+      "AIIgnoreAddRequest": {
+        "type": "object",
+        "required": ["pattern"],
+        "properties": {
+          "pattern": {
+            "type": "string",
+            "description": "Pattern to ignore (supports wildcards)",
+            "example": "*.test.js"
+          }
+        }
+      },
+      "AIIgnoreRemoveRequest": {
+        "type": "object",
+        "required": ["pattern"],
+        "properties": {
+          "pattern": {
+            "type": "string",
+            "description": "Pattern to remove from ignore list"
+          }
+        }
+      },
+      "FeatureWeightsResponse": {
+        "type": "object",
+        "properties": {
+          "weights": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "number"
+            },
+            "description": "Map of feature IDs to weight values"
+          }
+        }
+      },
+      "UpdateFeatureWeightRequest": {
+        "type": "object",
+        "required": ["weight"],
+        "properties": {
+          "weight": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "New weight value (0-1)"
+          }
+        }
+      },
+      "FeatureWeightResponse": {
+        "type": "object",
+        "properties": {
+          "feature_id": {
+            "type": "string"
+          },
+          "weight": {
+            "type": "number"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "required": ["error", "message"],
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "Error code"
           },
           "message": {
-            "type": "string"
+            "type": "string",
+            "description": "Human-readable error message"
+          },
+          "details": {
+            "type": "object",
+            "description": "Additional error details",
+            "additionalProperties": true
+          },
+          "request_id": {
+            "type": "string",
+            "description": "Unique request identifier for debugging"
           }
         }
       }
@@ -210,8 +779,28 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "scheme": "bearer"
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "Enter your API key in the format: `Bearer YOUR_API_KEY`"
       }
     }
-  }
+  },
+  "tags": [
+    {
+      "name": "Risk Assessment",
+      "description": "Endpoints for assessing AI task risk"
+    },
+    {
+      "name": "Dependency Graphs",
+      "description": "Endpoints for generating and viewing dependency graphs"
+    },
+    {
+      "name": "AI Ignore",
+      "description": "Manage patterns to ignore in AI analysis"
+    },
+    {
+      "name": "Feature Weights",
+      "description": "Configure feature weights for risk calculation"
+    }
+  ]
 }
