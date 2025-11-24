@@ -1,68 +1,76 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Mint Starter Kit",
+  "name": "Orcho",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#D4AF37",
+    "light": "#F4D03F",
+    "dark": "#B8860B"
   },
   "favicon": "/favicon.svg",
   "navigation": {
     "tabs": [
       {
-        "tab": "Guides",
+        "tab": "Documentation",
         "groups": [
           {
-            "group": "Getting started",
+            "group": "Getting Started",
             "pages": [
               "index",
               "quickstart",
-              "development"
+              "authentication"
             ]
           },
           {
-            "group": "Customization",
+            "group": "Core Concepts",
             "pages": [
-              "essentials/settings",
-              "essentials/navigation"
+              "concepts/risk-scoring",
+              "concepts/dependency-graphs",
+              "concepts/feature-weights"
             ]
           },
           {
-            "group": "Writing content",
+            "group": "Guides",
             "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/reusable-snippets"
-            ]
-          },
-          {
-            "group": "AI tools",
-            "pages": [
-              "ai-tools/cursor",
-              "ai-tools/claude-code",
-              "ai-tools/windsurf"
+              "guides/integration",
+              "guides/error-handling",
+              "guides/rate-limits",
+              "guides/best-practices"
             ]
           }
         ]
       },
       {
-        "tab": "API reference",
+        "tab": "API Reference",
         "groups": [
           {
-            "group": "API documentation",
+            "group": "Risk Assessment",
             "pages": [
-              "api-reference/introduction"
+              "api-reference/risk/generate",
+              "api-reference/risk/history"
             ]
           },
           {
-            "group": "Endpoint examples",
+            "group": "Dependency Graphs",
             "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
+              "api-reference/dependency-graph/generate",
+              "api-reference/dependency-graph/view",
+              "api-reference/dependency-graph/list"
+            ]
+          },
+          {
+            "group": "AI Ignore",
+            "pages": [
+              "api-reference/aiignore/add",
+              "api-reference/aiignore/delete",
+              "api-reference/aiignore/get"
+            ]
+          },
+          {
+            "group": "Feature Weights",
+            "pages": [
+              "api-reference/features/update-weight",
+              "api-reference/features/get-weights"
             ]
           }
         ]
@@ -71,14 +79,19 @@
     "global": {
       "anchors": [
         {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
+          "anchor": "Dashboard",
+          "href": "https://app.orcho.ai",
+          "icon": "chart-line"
         },
         {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
+          "anchor": "GitHub",
+          "href": "https://github.com/orcho-ai",
+          "icon": "github"
+        },
+        {
+          "anchor": "Support",
+          "href": "mailto:support@orcho.ai",
+          "icon": "envelope"
         }
       ]
     }
@@ -90,14 +103,14 @@
   "navbar": {
     "links": [
       {
-        "label": "Support",
-        "href": "mailto:hi@mintlify.com"
+        "label": "Blog",
+        "href": "https://orcho.ai/blog"
       }
     ],
     "primary": {
       "type": "button",
-      "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
+      "label": "Get API Key",
+      "href": "https://app.orcho.ai/keys"
     }
   },
   "contextual": {
@@ -106,17 +119,13 @@
      "view",
      "chatgpt",
      "claude",
-     "perplexity",
-     "mcp",
      "cursor",
      "vscode"
    ]
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
+      "linkedin": "https://www.linkedin.com/company/orcho-ai"
     }
   }
 }
