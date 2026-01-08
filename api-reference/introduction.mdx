@@ -9,13 +9,12 @@ icon: "shield-halved"
 The Orcho Risk Generation API provides endpoints for assessing the risk of AI prompts and code changes before execution. Get risk scores from 0-100 with detailed breakdowns across multiple risk factors.
 
 <CardGroup cols={2}>
-<Card title="Generate Risk Score" icon="calculator" href="/api-reference/generate-risk">
-  Assess risk based on prompt text only
-</Card>
-
-<Card title="Risk with Context" icon="code" href="/api-reference/generate-risk-with-context">
-  Assess risk with full code context and dependency analysis
-</Card>
+  <Card title="Generate Risk Score" icon="calculator" href="/api-reference/generate-risk">
+    Assess risk based on prompt text only
+  </Card>
+  <Card title="Risk with Context" icon="code" href="/api-reference/generate-risk-with-context">
+    Assess risk with full code context and dependency analysis
+  </Card>
 </CardGroup>
 
 ## Base URL
@@ -31,11 +30,13 @@ https://api.orcho.ai
 All API endpoints require authentication using Bearer tokens. Include your API key in the Authorization header of every request.
 
 <CodeGroup>
+
 ```bash cURL
 curl -X POST 'https://api.orcho.ai/api/v1/generate-risk' \
   -H 'Authorization: Bearer YOUR_API_KEY' \
   -H 'Content-Type: application/json'
 ```
+
 
 ```python Python
 import requests
@@ -52,6 +53,7 @@ response = requests.post(
 )
 ```
 
+
 ```javascript JavaScript
 const response = await fetch('https://api.orcho.ai/api/v1/generate-risk', {
   method: 'POST',
@@ -62,10 +64,11 @@ const response = await fetch('https://api.orcho.ai/api/v1/generate-risk', {
   body: JSON.stringify(requestBody)
 });
 ```
+
 </CodeGroup>
 
 <Warning>
-Never expose your API key in client-side code or public repositories. Store it securely in environment variables.
+  Never expose your API key in client-side code or public repositories. Store it securely in environment variables.
 </Warning>
 
 ## Risk Assessment Overview
@@ -73,48 +76,43 @@ Never expose your API key in client-side code or public repositories. Store it s
 The API evaluates AI tasks across multiple risk dimensions:
 
 <AccordionGroup>
-<Accordion title="Data Sensitivity">
-Analyzes prompts for presence of personally identifiable information (PII), credentials, API keys, and other sensitive data that could pose security risks if exposed.
-</Accordion>
-
-<Accordion title="Input Clarity">
-Evaluates whether the prompt contains all necessary components for successful execution, identifying missing context, unclear instructions, or ambiguous requirements.
-</Accordion>
-
-<Accordion title="Blast Radius">
-Measures the potential impact on your codebase by analyzing dependency graphs to determine how many files and components could be affected by changes.
-</Accordion>
-
-<Accordion title="Context Complexity">
-Assesses the complexity of the task based on the number of files, dependencies, and interconnections in the provided context.
-</Accordion>
-
-<Accordion title="Legal/IP Risk">
-Identifies potential legal and intellectual property concerns, including copyright issues, licensing conflicts, and proprietary code considerations.
-</Accordion>
-
-<Accordion title="Model Hallucination Rate">
-Estimates the likelihood of AI model hallucinations based on prompt characteristics, task complexity, and available context.
-</Accordion>
+  <Accordion title="Data Sensitivity">
+    Analyzes prompts for presence of personally identifiable information (PII), credentials, API keys, and other sensitive data that could pose security risks if exposed.
+  </Accordion>
+  <Accordion title="Input Clarity">
+    Evaluates whether the prompt contains all necessary components for successful execution, identifying missing context, unclear instructions, or ambiguous requirements.
+  </Accordion>
+  <Accordion title="Blast Radius">
+    Measures the potential impact on your codebase by analyzing dependency graphs to determine how many files and components could be affected by changes.
+  </Accordion>
+  <Accordion title="Context Complexity">
+    Assesses the complexity of the task based on the number of files, dependencies, and interconnections in the provided context.
+  </Accordion>
+  <Accordion title="Legal/IP Risk">
+    Identifies potential legal and intellectual property concerns, including copyright issues, licensing conflicts, and proprietary code considerations.
+  </Accordion>
+  <Accordion title="Model Hallucination Rate">
+    Estimates the likelihood of AI model hallucinations based on prompt characteristics, task complexity, and available context.
+  </Accordion>
 </AccordionGroup>
 
 ## Risk Score Interpretation
 
 Risk scores range from 0 to 100:
 
-| Score Range | Risk Level | Recommendation |
-|------------|-----------|----------------|
-| 0-25 | Low | Safe to proceed automatically |
-| 26-50 | Medium | Review recommendations before proceeding |
-| 51-75 | High | Require human review |
-| 76-100 | Critical | Manual intervention required |
+| Score Range | Risk Level | Recommendation                           |
+| ----------- | ---------- | ---------------------------------------- |
+| 0-25        | Low        | Safe to proceed automatically            |
+| 26-50       | Medium     | Review recommendations before proceeding |
+| 51-75       | High       | Require human review                     |
+| 76-100      | Critical   | Manual intervention required             |
 
 ## Rate Limits
 
 API requests are rate-limited to ensure fair usage and system stability. If you exceed rate limits, you'll receive a 429 status code.
 
 <Note>
-Contact support@orcho.ai to discuss higher rate limits for enterprise usage.
+  Contact [support@orcho.ai](mailto:support@orcho.ai) to discuss higher rate limits for enterprise usage.
 </Note>
 
 ## Health Check
@@ -122,16 +120,20 @@ Contact support@orcho.ai to discuss higher rate limits for enterprise usage.
 Use the health check endpoint to verify API availability:
 
 <CodeGroup>
+
 ```bash cURL
 curl https://api.orcho.ai/health
 ```
 
+
 ```python Python
 response = requests.get('https://api.orcho.ai/health')
 ```
+
 </CodeGroup>
 
 <ResponseExample>
+
 ```json Success Response
 {
   "status": "healthy",
@@ -139,21 +141,23 @@ response = requests.get('https://api.orcho.ai/health')
   "timestamp": "2025-01-08T15:30:00Z"
 }
 ```
+
 </ResponseExample>
 
 ## Error Handling
 
 The API uses standard HTTP status codes and returns detailed error information:
 
-| Status Code | Meaning |
-|------------|---------|
-| 200 | Success |
-| 400 | Bad Request - Invalid input |
-| 401 | Unauthorized - Invalid or missing API key |
-| 429 | Rate Limit Exceeded |
-| 500 | Internal Server Error |
+| Status Code | Meaning                                   |
+| ----------- | ----------------------------------------- |
+| 200         | Success                                   |
+| 400         | Bad Request - Invalid input               |
+| 401         | Unauthorized - Invalid or missing API key |
+| 429         | Rate Limit Exceeded                       |
+| 500         | Internal Server Error                     |
 
 <ResponseExample>
+
 ```json Error Response
 {
   "success": false,
@@ -164,6 +168,7 @@ The API uses standard HTTP status codes and returns detailed error information:
   }
 }
 ```
+
 </ResponseExample>
 
 ## Support
@@ -171,11 +176,10 @@ The API uses standard HTTP status codes and returns detailed error information:
 Need help? Reach out to our team:
 
 <CardGroup cols={2}>
-<Card title="Documentation" icon="book" href="https://docs.orcho.ai">
-  Browse our complete documentation
-</Card>
-
-<Card title="Support" icon="life-ring" href="mailto:support@orcho.ai">
-  Email our support team
-</Card>
+  <Card title="Documentation" icon="book" href="https://docs.orcho.ai">
+    Browse our complete documentation
+  </Card>
+  <Card title="Support" icon="life-ring" href="mailto:support@orcho.ai">
+    Email our support team
+  </Card>
 </CardGroup>
