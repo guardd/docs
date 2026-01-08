@@ -9,24 +9,8 @@
   },
   "favicon": "/favicon.svg",
   "navigation": {
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Dashboard",
-          "icon": "chart-line",
-          "href": "https://app.orcho.ai"
-        },
-        {
-          "anchor": "Support",
-          "icon": "envelope",
-          "href": "mailto:support@orcho.ai"
-        }
-      ]
-    },
     "tabs": [
       {
-<<<<<<< Updated upstream
-=======
         "tab": "Documentation",
         "groups": [
           {
@@ -66,7 +50,6 @@
         ]
       },
       {
->>>>>>> Stashed changes
         "tab": "API Reference",
         "groups": [
           {
@@ -91,7 +74,21 @@
           }
         ]
       }
-    ]
+    ],
+    "global": {
+      "anchors": [
+        {
+          "anchor": "Dashboard",
+          "href": "https://app.orcho.ai",
+          "icon": "chart-line"
+        },
+        {
+          "anchor": "Support",
+          "href": "mailto:support@orcho.ai",
+          "icon": "envelope"
+        }
+      ]
+    }
   },
   "logo": {
     "light": "/logo/light.svg",
