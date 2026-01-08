@@ -9,23 +9,18 @@ Orcho analyzes your coding prompts in real-time within Cursor to identify potent
 ## Features
 
 <CardGroup cols={2}>
-
-<Card title="Real-time Assessment" icon="gauge-high">
-Analyze prompts using Orcho's risk analysis API as you type
-</Card>
-
-<Card title="Context-Aware" icon="folder-tree">
-Automatically includes file context for accurate blast radius analysis
-</Card>
-
-<Card title="Security First" icon="shield-check">
-Identifies high-risk prompts before execution
-</Card>
-
-<Card title="Seamless Integration" icon="plug">
-Works natively with Cursor's Model Context Protocol
-</Card>
-
+  <Card title="Real-time Assessment" icon="gauge-high">
+    Analyze prompts using Orcho's risk analysis API as you type
+  </Card>
+  <Card title="Context-Aware" icon="folder-tree">
+    Automatically includes file context for accurate blast radius analysis
+  </Card>
+  <Card title="Security First" icon="shield-check">
+    Identifies high-risk prompts before execution
+  </Card>
+  <Card title="Seamless Integration" icon="plug">
+    Works natively with Cursor's Model Context Protocol
+  </Card>
 </CardGroup>
 
 ## Quick Install
@@ -39,37 +34,29 @@ cursor://anysphere.cursor-deeplink/mcp/install?name=orcho&config=eyJuYW1lIjoib3J
 ```
 
 <Steps>
+  <Step title="Copy the installation link">
+    Copy the link above to your clipboard
+  </Step>
+  <Step title="Paste into browser">
+    Paste the link into your browser's address bar and press Enter
+  </Step>
+  <Step title="Cursor opens automatically">
+    Cursor will open and automatically configure the MCP server
 
-<Step title="Copy the installation link">
-Copy the link above to your clipboard
-</Step>
+    <Check>
+      The MCP server configuration is now added to your Cursor settings
+    </Check>
+  </Step>
+  <Step title="Update API key">
+    Replace the test API key with your real key (see [API Configuration](#api-configuration))
+  </Step>
+  <Step title="Restart Cursor">
+    Completely quit and reopen Cursor to activate the MCP server
 
-<Step title="Paste into browser">
-Paste the link into your browser's address bar and press Enter
-</Step>
-
-<Step title="Cursor opens automatically">
-Cursor will open and automatically configure the MCP server
-
-<Check>
-The MCP server configuration is now added to your Cursor settings
-</Check>
-
-</Step>
-
-<Step title="Update API key">
-Replace the test API key with your real key (see [API Configuration](#api-configuration))
-</Step>
-
-<Step title="Restart Cursor">
-Completely quit and reopen Cursor to activate the MCP server
-
-<Check>
-The Orcho MCP server is now active!
-</Check>
-
-</Step>
-
+    <Check>
+      The Orcho MCP server is now active!
+    </Check>
+  </Step>
 </Steps>
 
 ## Manual Installation
@@ -77,64 +64,56 @@ The Orcho MCP server is now active!
 If the one-click install doesn't work, follow these steps:
 
 <Steps>
+  <Step title="Install the package">
+    Install globally via npm:
 
-<Step title="Install the package">
-Install globally via npm:
+    ```bash
+    npm install -g @orcho_risk/mcp-server
+    ```
+  </Step>
+  <Step title="Configure Cursor">
+    Create or edit the MCP configuration file:
 
-```bash
-npm install -g @orcho_risk/mcp-server
-```
-</Step>
+    <Tabs>
+      <Tab title="macOS/Linux">
+        Edit `~/.cursor/mcp.json`:
 
-<Step title="Configure Cursor">
-Create or edit the MCP configuration file:
+        ```json ~/.cursor/mcp.json
+        {
+          "mcpServers": {
+            "orcho": {
+              "command": "npx",
+              "args": ["-y", "@orcho_risk/mcp-server"],
+              "env": {
+                "ORCHO_API_KEY": "your-api-key-here"
+              }
+            }
+          }
+        }
+        ```
+      </Tab>
+      <Tab title="Windows">
+        Edit `C:\Users\<YourUsername>\.cursor\mcp.json`:
 
-<Tabs>
-
-<Tab title="macOS/Linux">
-Edit `~/.cursor/mcp.json`:
-
-```json ~/.cursor/mcp.json
-{
-  "mcpServers": {
-    "orcho": {
-      "command": "npx",
-      "args": ["-y", "@orcho_risk/mcp-server"],
-      "env": {
-        "ORCHO_API_KEY": "your-api-key-here"
-      }
-    }
-  }
-}
-```
-</Tab>
-
-<Tab title="Windows">
-Edit `C:\Users\<YourUsername>\.cursor\mcp.json`:
-
-```json C:\Users\<YourUsername>\.cursor\mcp.json
-{
-  "mcpServers": {
-    "orcho": {
-      "command": "npx",
-      "args": ["-y", "@orcho_risk/mcp-server"],
-      "env": {
-        "ORCHO_API_KEY": "your-api-key-here"
-      }
-    }
-  }
-}
-```
-</Tab>
-
-</Tabs>
-
-</Step>
-
-<Step title="Restart Cursor">
-Completely quit and reopen Cursor (not just reload window)
-</Step>
-
+        ```json C:\Users<YourUsername>.cursor\mcp.json
+        {
+          "mcpServers": {
+            "orcho": {
+              "command": "npx",
+              "args": ["-y", "@orcho_risk/mcp-server"],
+              "env": {
+                "ORCHO_API_KEY": "your-api-key-here"
+              }
+            }
+          }
+        }
+        ```
+      </Tab>
+    </Tabs>
+  </Step>
+  <Step title="Restart Cursor">
+    Completely quit and reopen Cursor (not just reload window)
+  </Step>
 </Steps>
 
 ## API Configuration
@@ -142,46 +121,37 @@ Completely quit and reopen Cursor (not just reload window)
 ### Get Your API Key
 
 <Steps>
+  <Step title="Contact Orcho">
+    Email [support@orcho.ai](mailto:support@orcho.ai) to request an API key for your organization
+  </Step>
+  <Step title="Receive your API key">
+    Our team will provision an API key and send it to you securely
+  </Step>
+  <Step title="Update mcp.json">
+    Add your API key to the configuration file:
 
-<Step title="Contact Orcho">
-Email [support@orcho.ai](mailto:support@orcho.ai) to request an API key for your organization
-</Step>
-
-<Step title="Receive your API key">
-Our team will provision an API key and send it to you securely
-</Step>
-
-<Step title="Update mcp.json">
-Add your API key to the configuration file:
-
-<Tabs>
-
-<Tab title="macOS/Linux">
-```bash
-# Edit the file
-nano ~/.cursor/mcp.json
-
-# Replace test_key_orcho_12345 with your actual key
-```
-</Tab>
-
-<Tab title="Windows">
-```powershell
-# Edit the file
-notepad C:\Users\<YourUsername>\.cursor\mcp.json
-
-# Replace test_key_orcho_12345 with your actual key
-```
-</Tab>
-
-</Tabs>
-
-</Step>
-
-<Step title="Restart Cursor">
-Quit and reopen Cursor to load the new API key
-</Step>
-
+    <Tabs>
+      <Tab title="macOS/Linux">
+        ```bash
+        # Edit the file
+        nano ~/.cursor/mcp.json
+        
+        # Replace test_key_orcho_12345 with your actual key
+        ```
+      </Tab>
+      <Tab title="Windows">
+        ```powershell
+        # Edit the file
+        notepad C:\Users\<YourUsername>\.cursor\mcp.json
+        
+        # Replace test_key_orcho_12345 with your actual key
+        ```
+      </Tab>
+    </Tabs>
+  </Step>
+  <Step title="Restart Cursor">
+    Quit and reopen Cursor to load the new API key
+  </Step>
 </Steps>
 
 ### Test API Key
@@ -193,7 +163,7 @@ test_key_orcho_12345
 ```
 
 <Warning>
-The test key has very limited functionality and rate limits. Contact [support@orcho.ai](mailto:support@orcho.ai) to get a production API key for your team.
+  The test key has very limited functionality and rate limits. Contact [support@orcho.ai](mailto:support@orcho.ai) to get a production API key for your team.
 </Warning>
 
 ## Usage
@@ -207,6 +177,7 @@ In Cursor chat, you can manually trigger risk assessment:
 ```
 
 Cursor will:
+
 1. Get the repository name by running `get_repo_name.py`
 2. Detect the currently open file
 3. Analyze which files will be modified
@@ -215,6 +186,7 @@ Cursor will:
 **Response format:**
 
 <ResponseExample>
+
 ```
 ⚠️ CRITICAL RISK (Score: 0.92)
 
@@ -236,10 +208,11 @@ Files Affected (from Blast Radius):
 
 Recommendation: BLOCK - High risk detected
 ```
+
 </ResponseExample>
 
 <Note>
-With automatic assessment enabled (using `.cursor/rules/orcho-risk-assessment.mdc`), you don't need to manually type `@orcho assess_risk` - it happens automatically for every prompt.
+  With automatic assessment enabled (using `.cursor/rules/orcho-risk-assessment.mdc`), you don't need to manually type `@orcho assess_risk` - it happens automatically for every prompt.
 </Note>
 
 ### Automatic Risk Assessment (Recommended)
@@ -247,252 +220,192 @@ With automatic assessment enabled (using `.cursor/rules/orcho-risk-assessment.md
 Enable automatic risk assessment for **all prompts** by adding a Cursor rule to your project.
 
 <Steps>
+  <Step title="Create required directories">
+    ```bash
+    mkdir -p .cursor/rules
+    mkdir -p .cursor/scripts
+    ```
+  </Step>
+  <Step title="Add the repository name script">
+    Create `.cursor/scripts/get_repo_name.py`:
 
-<Step title="Create required directories">
-```bash
-mkdir -p .cursor/rules
-mkdir -p .cursor/scripts
-```
-</Step>
-
-<Step title="Add the repository name script">
-Create `.cursor/scripts/get_repo_name.py`:
-
-```python .cursor/scripts/get_repo_name.py
-import subprocess
-import urllib.parse as up
-
-def _origin_url() -> str:
-    # Prefer `git remote get-url origin`, fall back to config if needed
-    for cmd in (["git", "remote", "get-url", "origin"],
-                ["git", "config", "--get", "remote.origin.url"]):
-        try:
-            out = subprocess.check_output(cmd, text=True).strip()
-            if out:
-                return out
-        except Exception:
-            pass
-    return ""
-
-def _owner_repo_from_url(u: str) -> str:
-    if not u:
+    ```python .cursor/scripts/get_repo_name.py
+    import subprocess
+    import urllib.parse as up
+    
+    def _origin_url() -> str:
+        # Prefer `git remote get-url origin`, fall back to config if needed
+        for cmd in (["git", "remote", "get-url", "origin"],
+                    ["git", "config", "--get", "remote.origin.url"]):
+            try:
+                out = subprocess.check_output(cmd, text=True).strip()
+                if out:
+                    return out
+            except Exception:
+                pass
         return ""
-
-    # HTTPS/SSH URL
-    if "://" in u:
-        path = up.urlparse(u).path
-    else:
-        # SCP-like: git@github.com:OWNER/REPO.git
-        if ":" in u and "@" in u.split(":", 1)[0]:
-            path = u.split(":", 1)[1]
+    
+    def _owner_repo_from_url(u: str) -> str:
+        if not u:
+            return ""
+    
+        # HTTPS/SSH URL
+        if "://" in u:
+            path = up.urlparse(u).path
         else:
-            path = u
+            # SCP-like: git@github.com:OWNER/REPO.git
+            if ":" in u and "@" in u.split(":", 1)[0]:
+                path = u.split(":", 1)[1]
+            else:
+                path = u
+    
+        path = path.strip("/")
+        if path.endswith(".git"):
+            path = path[:-4]
+    
+        parts = [p for p in path.split("/") if p]
+        return "/".join(parts[-2:]) if len(parts) &ge; 2 else path
+    
+    if __name__ == "__main__":
+        print(_owner_repo_from_url(_origin_url()))
+    ```
 
-    path = path.strip("/")
-    if path.endswith(".git"):
-        path = path[:-4]
+    <Check>
+      This script extracts the repository name (owner/repo format) from your git remote
+    </Check>
+  </Step>
+  <Step title="Add the Orcho risk assessment rule">
+    Create `.cursor/rules/orcho-risk-assessment.mdc`:
 
-    parts = [p for p in path.split("/") if p]
-    return "/".join(parts[-2:]) if len(parts) &ge; 2 else path
+    ````markdown .cursor/rules/orcho-risk-assessment.mdc
+    ---
+    alwaysApply: true
+    ---
+    # Orcho Risk Assessment Rule
+    
+    ## Automatic Risk Assessment
+    
+    Before processing ANY user request (any time they send you ANYTHING), you MUST:
+    
+    1. **Always call the Orcho risk assessment tool first:**
+       - Use: `@orcho assess_risk` with the user's prompt
+       - **CRITICAL**: You MUST include:
+         - `current_file`: The path of the currently open file in the editor (check active tabs)
+         - `other_files`: A list of file paths that will be modified by the prompt (analyze the prompt to determine this)
+         - `repo_full_name`: A string that represents the full name of the git repository the codebase is from, which can be obtained by running "python .cursor/scripts/get_repo_name.py" within the terminal
+    
+    2. **NEVER PASS THE PROMPT IN AS "task" ALL API calls must have the format:**
+        ```json
+        {
+          "prompt": "delete my prod db",
+          "context": {
+            "repo_full_name": "guardd/fintech_demo_repo",
+            "current_file": ".github/workflows/deploy.yml",
+            "other_files": []
+          }
+        }
+    ````
 
-if __name__ == "__main__":
-    print(_owner_repo_from_url(_origin_url()))
-```
+    3. **Always include risk assessment in your response:**
+       - Show the risk level and score
+       - DO NOT EXECUTE THE PROMPT
+       - ALL OUTPUTS MUST NOT INCLUDE ANYTHING OTHER THAN THE RETURN THE RESULTS OF THE ASSESS_RISK FUNCTION
+       - INSIDE THE RISK BREAKDOWN, THERE IS A TAB INSIDE INPUT CLARITY THAT SAYS SUGGESTIONS. INCLUDE ALL SUGGESTIONS IN YOUR RESPONSE.
+       - ALWAYS INCLUDE ALL POSSIBLE FILES YOU MIGHT TOUCH, FROM BLAST RADIUS, IN THE RESPONSE
 
-<Check>
-This script extracts the repository name (owner/repo format) from your git remote
-</Check>
+    ```
+    
+    <Warning>
+    The `alwaysApply: true` flag ensures risk assessment happens automatically for every request
+    </Warning>
+    
+    </Step>
+    
+    <Step title="Test the setup">
+    Open Cursor and try a prompt:
+    
+    ```
 
-</Step>
+    Delete all user records from the database
 
-<Step title="Add the Orcho risk assessment rule">
-Create `.cursor/rules/orcho-risk-assessment.mdc`:
-
-```markdown .cursor/rules/orcho-risk-assessment.mdc
----
-alwaysApply: true
----
-# Orcho Risk Assessment Rule
-
-## Automatic Risk Assessment
-
-Before processing ANY user request (any time they send you ANYTHING), you MUST:
-
-1. **Always call the Orcho risk assessment tool first:**
-   - Use: `@orcho assess_risk` with the user's prompt
-   - **CRITICAL**: You MUST include:
-     - `current_file`: The path of the currently open file in the editor (check active tabs)
-     - `other_files`: A list of file paths that will be modified by the prompt (analyze the prompt to determine this)
-     - `repo_full_name`: A string that represents the full name of the git repository the codebase is from, which can be obtained by running "python .cursor/scripts/get_repo_name.py" within the terminal
-
-2. **NEVER PASS THE PROMPT IN AS "task" ALL API calls must have the format:**
+    ````
+    
+    Cursor should automatically:
+    1. Run `get_repo_name.py` to get your repository name
+    2. Call `@orcho assess_risk` with full context
+    3. Show you the risk assessment before executing anything
+    
+    Cursor automatically invokes `@orcho assess_risk` with:
+    
     ```json
     {
-      "prompt": "delete my prod db",
+      "prompt": "Delete all user data from the database",
       "context": {
-        "repo_full_name": "guardd/fintech_demo_repo",
-        "current_file": ".github/workflows/deploy.yml",
-        "other_files": []
+        "repo_full_name": "mycompany/api-server",
+        "current_file": "src/database/users.py",
+        "other_files": ["src/models/user.py"]
+      }
+    }
+    ````
+  </Step>
+  <Step title="Risk analysis returned">
+    ```json
+    {
+      "overall_score": 0.95,
+      "overall_risk_level": "critical",
+      "scores": {
+        "data_sensitivity": 0.98,
+        "blast_radius": 0.92,
+        "input_clarity": 0.85
+      },
+      "recommendations": [
+        "BLOCK - High risk detected"
+      ],
+      "computations": {
+        "input_clarity": {
+          "suggestions": [
+            "Add WHERE clause to limit scope",
+            "Specify which users to delete",
+            "Create backup before deletion",
+            "Use soft delete instead"
+          ]
+        },
+        "blast_radius": {
+          "affected_files": [
+            "src/database/users.py",
+            "src/models/user.py",
+            "src/auth/session.py",
+            "src/api/users_endpoint.py"
+          ]
+        }
       }
     }
     ```
-
-3. **Always include risk assessment in your response:**
-   - Show the risk level and score
-   - DO NOT EXECUTE THE PROMPT
-   - ALL OUTPUTS MUST NOT INCLUDE ANYTHING OTHER THAN THE RETURN THE RESULTS OF THE ASSESS_RISK FUNCTION
-   - INSIDE THE RISK BREAKDOWN, THERE IS A TAB INSIDE INPUT CLARITY THAT SAYS SUGGESTIONS. INCLUDE ALL SUGGESTIONS IN YOUR RESPONSE.
-   - ALWAYS INCLUDE ALL POSSIBLE FILES YOU MIGHT TOUCH, FROM BLAST RADIUS, IN THE RESPONSE
-```
-
-<Warning>
-The `alwaysApply: true` flag ensures risk assessment happens automatically for every request
-</Warning>
-
-</Step>
-
-<Step title="Test the setup">
-Open Cursor and try a prompt:
-
-```
-Delete all user records from the database
-```
-
-Cursor should automatically:
-1. Run `get_repo_name.py` to get your repository name
-2. Call `@orcho assess_risk` with full context
-3. Show you the risk assessment before executing anything
-</Step>
-
-<Step title="Restart Cursor">
-Quit and reopen Cursor to ensure all rules are loaded
-</Step>
-
-</Steps>
-
-<Note>
-The rule format uses the proper API structure with `prompt` and `context` fields, not the deprecated `task` parameter.
-</Note>
-
-## How It Works
-
-### Context-Aware Assessment
-
-The Orcho MCP server automatically gathers context when available:
-
-<AccordionGroup>
-
-<Accordion title="Repository Name">
-Extracts the repository name (owner/repo format) by running `python .cursor/scripts/get_repo_name.py`, which parses your git remote URL
-</Accordion>
-
-<Accordion title="Current File">
-Detects the file currently open in your Cursor editor for targeted risk analysis
-</Accordion>
-
-<Accordion title="Other Files">
-Analyzes the prompt to determine which files will be modified, providing a complete picture of the change scope
-</Accordion>
-
-<Accordion title="Dependency Graph">
-Uses project dependency information from the API's database (if available for your repository) to calculate blast radius
-</Accordion>
-
-<Accordion title="Blast Radius">
-Calculates the scope and impact of proposed changes across your codebase, showing all potentially affected files
-</Accordion>
-
-</AccordionGroup>
-
-### Example Workflow
-
-<Steps>
-
-<Step title="User writes prompt">
-```
-User: "Delete all user data from the database"
-```
-</Step>
-
-<Step title="Get repository context">
-Cursor runs `python .cursor/scripts/get_repo_name.py` to get: `mycompany/api-server`
-</Step>
-
-<Step title="Cursor calls MCP server">
-Cursor automatically invokes `@orcho assess_risk` with:
-
-```json
-{
-  "prompt": "Delete all user data from the database",
-  "context": {
-    "repo_full_name": "mycompany/api-server",
-    "current_file": "src/database/users.py",
-    "other_files": ["src/models/user.py"]
-  }
-}
-```
-</Step>
-
-<Step title="Risk analysis returned">
-```json
-{
-  "overall_score": 0.95,
-  "overall_risk_level": "critical",
-  "scores": {
-    "data_sensitivity": 0.98,
-    "blast_radius": 0.92,
-    "input_clarity": 0.85
-  },
-  "recommendations": [
-    "BLOCK - High risk detected"
-  ],
-  "computations": {
-    "input_clarity": {
-      "suggestions": [
-        "Add WHERE clause to limit scope",
-        "Specify which users to delete",
-        "Create backup before deletion",
-        "Use soft delete instead"
-      ]
-    },
-    "blast_radius": {
-      "affected_files": [
-        "src/database/users.py",
-        "src/models/user.py",
-        "src/auth/session.py",
-        "src/api/users_endpoint.py"
-      ]
-    }
-  }
-}
-```
-</Step>
-
-<Step title="Cursor displays to user">
-```
-⚠️ CRITICAL RISK (Score: 0.95)
-
-Risk Factors:
-- Data Sensitivity: 0.98 (CRITICAL)
-- Blast Radius: 0.92 (CRITICAL)
-- Input Clarity: 0.85 (HIGH)
-
-Suggestions from Input Clarity:
-- Add WHERE clause to limit scope
-- Specify which users to delete
-- Create backup before deletion
-- Use soft delete instead
-
-Files that will be affected (from Blast Radius):
-- src/database/users.py (current file)
-- src/models/user.py
-- src/auth/session.py
-- src/api/users_endpoint.py
-
-⚠️ This operation has been blocked due to critical risk level.
-```
-</Step>
-
+  </Step>
+  <Step title="Cursor displays to user">
+    ```
+    ⚠️ CRITICAL RISK (Score: 0.95)
+    
+    Risk Factors:
+    - Data Sensitivity: 0.98 (CRITICAL)
+    - Blast Radius: 0.92 (CRITICAL)
+    - Input Clarity: 0.85 (HIGH)
+    
+    Suggestions from Input Clarity:
+    - Add WHERE clause to limit scope
+    - Specify which users to delete
+    - Create backup before deletion
+    - Use soft delete instead
+    
+    Files that will be affected (from Blast Radius):
+    - src/database/users.py (current file)
+    - src/models/user.py
+    - src/auth/session.py
+    - src/api/users_endpoint.py
+    
+    ⚠️ This operation has been blocked due to critical risk level.
+    ```
+  </Step>
 </Steps>
 
 ## MCP Tool Parameters
@@ -500,49 +413,47 @@ Files that will be affected (from Blast Radius):
 The `assess_risk` tool uses the following structure:
 
 <ParamField body="prompt" type="string" required>
-The prompt or task description to assess for risk
+  The prompt or task description to assess for risk
 </ParamField>
 
 <ParamField body="context" type="object" required>
-Context object containing repository and file information
+  Context object containing repository and file information
 
-<Expandable title="Context Fields">
-  <ParamField body="context.repo_full_name" type="string" required>
-  Full repository name in `owner/repo` format. Obtained by running `python .cursor/scripts/get_repo_name.py`
-  
-  Example: `"mycompany/api-server"`
-  </ParamField>
-  
-  <ParamField body="context.current_file" type="string" required>
-  Path to the currently open file in the editor (auto-detected by Cursor)
-  
-  Example: `"src/database/users.py"`
-  </ParamField>
-  
-  <ParamField body="context.other_files" type="array">
-  Array of file paths that will be modified by the prompt. Analyze the prompt to determine which files will be affected.
-  
-  Example: `["src/models/user.py", "src/api/users.py"]`
-  </ParamField>
-</Expandable>
+  <Expandable title="Context Fields">
+    <ParamField body="context.repo_full_name" type="string" required>
+      Full repository name in `owner/repo` format. Obtained by running `python .cursor/scripts/get_repo_name.py`
 
+      Example: `"mycompany/api-server"`
+    </ParamField>
+    <ParamField body="context.current_file" type="string" required>
+      Path to the currently open file in the editor (auto-detected by Cursor)
+
+      Example: `"src/database/users.py"`
+    </ParamField>
+    <ParamField body="context.other_files" type="array">
+      Array of file paths that will be modified by the prompt. Analyze the prompt to determine which files will be affected.
+
+      Example: `["src/models/user.py", "src/api/users.py"]`
+    </ParamField>
+  </Expandable>
 </ParamField>
 
 <ParamField body="weights" type="object">
-Optional custom risk calculation weights for different risk factors
+  Optional custom risk calculation weights for different risk factors
 
-Example:
-```json
-{
-  "data_sensitivity": 0.3,
-  "blast_radius": 0.4,
-  "input_clarity": 0.3
-}
-```
+  Example:
+
+  ```json
+  {
+    "data_sensitivity": 0.3,
+    "blast_radius": 0.4,
+    "input_clarity": 0.3
+  }
+  ```
 </ParamField>
 
 <Warning>
-**Important:** Do NOT use the deprecated `task` parameter. Always use `prompt` with `context` object.
+  **Important:** Do NOT use the deprecated `task` parameter. Always use `prompt` with `context` object.
 </Warning>
 
 ### Example Request
@@ -569,122 +480,114 @@ Example:
 ## Troubleshooting
 
 <AccordionGroup>
+  <Accordion title="MCP Server Not Loading">
+    **Check configuration file location:**
 
-<Accordion title="MCP Server Not Loading">
-**Check configuration file location:**
+    <Tabs>
+      <Tab title="macOS/Linux">
+        ```bash
+        ls -la ~/.cursor/mcp.json
+        cat ~/.cursor/mcp.json
+        ```
+      </Tab>
+      <Tab title="Windows">
+        ```powershell
+        dir C:\Users\<YourUsername>\.cursor\mcp.json
+        type C:\Users\<YourUsername>\.cursor\mcp.json
+        ```
+      </Tab>
+    </Tabs>
+    **Verify Node.js version:**
 
-<Tabs>
+    ```bash
+    node --version  # Requires v18 or higher
+    ```
 
-<Tab title="macOS/Linux">
-```bash
-ls -la ~/.cursor/mcp.json
-cat ~/.cursor/mcp.json
-```
-</Tab>
+    **Check Cursor Developer Tools:**
 
-<Tab title="Windows">
-```powershell
-dir C:\Users\<YourUsername>\.cursor\mcp.json
-type C:\Users\<YourUsername>\.cursor\mcp.json
-```
-</Tab>
+    1. Open Cursor
+    2. Go to Help → Toggle Developer Tools
+    3. Check Console tab for MCP-related errors
+  </Accordion>
+  <Accordion title="API Key Errors">
+    **Invalid API Key:**
 
-</Tabs>
+    - Verify the key is correct in `mcp.json`
+    - Ensure there are no extra spaces or quotes
+    - Contact [support@orcho.ai](mailto:support@orcho.ai) if issues persist
 
-**Verify Node.js version:**
-```bash
-node --version  # Requires v18 or higher
-```
+    **Rate Limits:**
 
-**Check Cursor Developer Tools:**
-1. Open Cursor
-2. Go to Help → Toggle Developer Tools
-3. Check Console tab for MCP-related errors
-</Accordion>
+    - Contact [support@orcho.ai](mailto:support@orcho.ai) to check your account quota
+    - Request a plan upgrade if needed
+    - Test key has very low limits - get a production key
 
-<Accordion title="API Key Errors">
-**Invalid API Key:**
-- Verify the key is correct in `mcp.json`
-- Ensure there are no extra spaces or quotes
-- Contact [support@orcho.ai](mailto:support@orcho.ai) if issues persist
+    **No API Key:** The server will use the test key by default (limited functionality)
+  </Accordion>
+  <Accordion title="MCP Server Not Responding">
+    **Restart Cursor completely:**
 
-**Rate Limits:**
-- Contact [support@orcho.ai](mailto:support@orcho.ai) to check your account quota
-- Request a plan upgrade if needed
-- Test key has very low limits - get a production key
+    - Quit Cursor entirely (not just close window)
+    - Reopen Cursor
+    - Wait 10-15 seconds for MCP server to initialize
 
-**No API Key:**
-The server will use the test key by default (limited functionality)
-</Accordion>
+    **Check internet connectivity:**
 
-<Accordion title="MCP Server Not Responding">
-**Restart Cursor completely:**
-- Quit Cursor entirely (not just close window)
-- Reopen Cursor
-- Wait 10-15 seconds for MCP server to initialize
+    ```bash
+    curl -I https://api.orcho.ai/health
+    ```
 
-**Check internet connectivity:**
-```bash
-curl -I https://api.orcho.ai/health
-```
+    **Verify package installation:**
 
-**Verify package installation:**
-```bash
-npm list -g @orcho_risk/mcp-server
-```
+    ```bash
+    npm list -g @orcho_risk/mcp-server
+    ```
 
-**Reinstall if needed:**
-```bash
-npm uninstall -g @orcho_risk/mcp-server
-npm install -g @orcho_risk/mcp-server
-```
-</Accordion>
+    **Reinstall if needed:**
 
-<Accordion title="Context Not Being Detected">
-**Ensure file is open in editor:**
-- The current file must be open in a Cursor tab
-- Try clicking into the file to focus it
+    ```bash
+    npm uninstall -g @orcho_risk/mcp-server
+    npm install -g @orcho_risk/mcp-server
+    ```
+  </Accordion>
+  <Accordion title="Context Not Being Detected">
+    **Ensure file is open in editor:**
 
-**Check file permissions:**
-- Verify Cursor can read the file
-- Check if file is in an ignored directory
+    - The current file must be open in a Cursor tab
+    - Try clicking into the file to focus it
 
-**Manually specify context:**
-```
-@orcho assess_risk --file src/auth.py: Your prompt here
-```
-</Accordion>
+    **Check file permissions:**
 
+    - Verify Cursor can read the file
+    - Check if file is in an ignored directory
+
+    **Manually specify context:**
+
+    ```
+    @orcho assess_risk --file src/auth.py: Your prompt here
+    ```
+  </Accordion>
 </AccordionGroup>
 
 ## Security Best Practices
 
 <Warning>
-Follow these security guidelines to protect your API keys and data:
+  Follow these security guidelines to protect your API keys and data:
 </Warning>
 
 <Steps>
-
-<Step title="Store keys securely">
-✅ Store API keys only in `~/.cursor/mcp.json`
-❌ Never hardcode keys in your project files
-</Step>
-
-<Step title="Never commit keys">
-✅ Add `mcp.json` to `.gitignore` if you copy it to project
-❌ Never commit API keys to version control
-</Step>
-
-<Step title="Rotate compromised keys">
-✅ Rotate keys immediately if accidentally exposed
-✅ Contact [support@orcho.ai](mailto:support@orcho.ai) to rotate your key
-</Step>
-
-<Step title="Use environment-specific keys">
-✅ Different keys for development and production
-✅ Limit key permissions appropriately
-</Step>
-
+  <Step title="Store keys securely">
+    ✅ Store API keys only in `~/.cursor/mcp.json` ❌ Never hardcode keys in your project files
+  </Step>
+  <Step title="Never commit keys">
+    ✅ Add `mcp.json` to `.gitignore` if you copy it to project ❌ Never commit API keys to version control
+  </Step>
+  <Step title="Rotate compromised keys">
+    ✅ Rotate keys immediately if accidentally exposed ✅ Contact [support@orcho.ai](mailto:support@orcho.ai) to rotate your key
+  </Step>
+  <Step title="Use environment-specific keys">
+    ✅ Different keys for development and production ✅ Limit key permissions appropriately
+  </Step>
 </Steps>
 
 ## Advanced Configuration
@@ -755,23 +658,18 @@ async function checkPullRequest(files, description) {
 ## Package Information
 
 <CardGroup cols={2}>
-
-<Card title="NPM Package" icon="npm" href="https://www.npmjs.com/package/@orcho_risk/mcp-server">
-View on NPM registry
-</Card>
-
-<Card title="Version" icon="tag">
-1.0.7 (Latest)
-</Card>
-
-<Card title="License" icon="scale-balanced">
-MIT License
-</Card>
-
-<Card title="Node.js Requirement" icon="node-js">
-v18.0.0 or higher
-</Card>
-
+  <Card title="NPM Package" icon="npm" href="https://www.npmjs.com/package/@orcho_risk/mcp-server">
+    View on NPM registry
+  </Card>
+  <Card title="Version" icon="tag">
+    1.0.7 (Latest)
+  </Card>
+  <Card title="License" icon="scale-balanced">
+    MIT License
+  </Card>
+  <Card title="Node.js Requirement" icon="node-js">
+    v18.0.0 or higher
+  </Card>
 </CardGroup>
 
 ## Support
@@ -779,43 +677,33 @@ v18.0.0 or higher
 Need help with the Cursor integration?
 
 <CardGroup cols={2}>
-
-<Card title="API Documentation" icon="book" href="/api-reference/introduction">
-Review the REST API docs
-</Card>
-
-<Card title="Get API Key" icon="key" href="mailto:support@orcho.ai">
-Contact us for an API key
-</Card>
-
-<Card title="GitHub Issues" icon="github" href="https://github.com/orcho/mcp-server">
-Report bugs or issues
-</Card>
-
-<Card title="Email Support" icon="envelope" href="mailto:support@orcho.ai">
-Contact support team
-</Card>
-
+  <Card title="API Documentation" icon="book" href="/api-reference/introduction">
+    Review the REST API docs
+  </Card>
+  <Card title="Get API Key" icon="key" href="mailto:support@orcho.ai">
+    Contact us for an API key
+  </Card>
+  <Card title="GitHub Issues" icon="github" href="https://github.com/orcho/mcp-server">
+    Report bugs or issues
+  </Card>
+  <Card title="Email Support" icon="envelope" href="mailto:support@orcho.ai">
+    Contact support team
+  </Card>
 </CardGroup>
 
 ## Next Steps
 
 <Steps>
-
-<Step title="Install the MCP server">
-Use the one-click install or manual setup
-</Step>
-
-<Step title="Get your API key">
-Contact [support@orcho.ai](mailto:support@orcho.ai) to request an API key
-</Step>
-
-<Step title="Add automatic assessment">
-Copy the Cursor rules to your project
-</Step>
-
-<Step title="Start coding safely">
-Orcho will now protect you from high-risk operations
-</Step>
-
+  <Step title="Install the MCP server">
+    Use the one-click install or manual setup
+  </Step>
+  <Step title="Get your API key">
+    Contact [support@orcho.ai](mailto:support@orcho.ai) to request an API key
+  </Step>
+  <Step title="Add automatic assessment">
+    Copy the Cursor rules to your project
+  </Step>
+  <Step title="Start coding safely">
+    Orcho will now protect you from high-risk operations
+  </Step>
 </Steps>
