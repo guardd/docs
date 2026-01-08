@@ -15,8 +15,7 @@
         "pages": [
           "integrations/cursor",
           "integrations/jira",
-          "integrations/browser",
-          "integrations/github"
+          "integrations/browser"
         ]
       },
       {
