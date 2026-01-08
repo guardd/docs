@@ -59,47 +59,32 @@ Code context information for dependency and impact analysis.
 </ParamField>
 
 <ParamField body="weights" type="object">
-Optional custom weights for each risk factor. All weights should sum to 1.0. If not provided, default weights are used.
-
-**Current default weights:**
-- `data_sensitivity`: 0.20 (20%)
-- `input_clarity`: 0.40 (40%)
-- `blast_radius`: 0.40 (40%)
-
-<Note>
-Only the three risk factors listed above are currently active. Additional factors (context_complexity, legal_ip_risk, model_hallucination) are planned for future releases.
-</Note>
+Optional custom weights for each risk factor. All weights should sum to 1.0. Weights are subject to your implementation requirements.
 
 <Expandable title="Weight Configuration">
-  <ParamField body="weights.data_sensitivity" type="number" default="0.20">
-  Weight for data sensitivity score (0-1). Currently active.
+  <ParamField body="weights.data_sensitivity" type="number">
+  Weight for data sensitivity score (0-1)
   </ParamField>
-
   
-  <ParamField body="weights.input_clarity" type="number" default="0.40">
-  Weight for input clarity score (0-1). Currently active.
+  <ParamField body="weights.input_clarity" type="number">
+  Weight for input clarity score (0-1)
   </ParamField>
-
   
-  <ParamField body="weights.blast_radius" type="number" default="0.40">
-  Weight for blast radius score (0-1). Currently active.
+  <ParamField body="weights.blast_radius" type="number">
+  Weight for blast radius score (0-1)
   </ParamField>
-
   
   <ParamField body="weights.context_complexity" type="number">
-  Weight for context complexity score (0-1). Coming in future release.
+  Weight for context complexity score (0-1)
   </ParamField>
-
   
   <ParamField body="weights.legal_ip_risk" type="number">
-  Weight for legal/IP risk score (0-1). Coming in future release.
+  Weight for legal/IP risk score (0-1)
   </ParamField>
-
   
   <ParamField body="weights.model_hallucination" type="number">
-  Weight for model hallucination risk score (0-1). Coming in future release.
+  Weight for model hallucination risk score (0-1)
   </ParamField>
-
 </Expandable>
 
 <Warning>
@@ -162,7 +147,7 @@ Individual risk factor scores (0.0-1.0). **Only includes successfully computed f
 </Expandable>
 
 <Note>
-Unavailable risk factors are not included in the scores object. Currently, only data_sensitivity, input_clarity, and blast_radius are active.
+Unavailable risk factors are not included in the scores object. Check `unavailable_parameters` for details on why factors were omitted.
 </Note>
 
 </ResponseField>
@@ -525,35 +510,41 @@ The blast radius score is the criticality score of the most critical file being 
 </Accordion>
 
 <Accordion title="Custom weights for code changes">
-Adjust weights based on your risk tolerance. Default weights:
-- `data_sensitivity`: 0.20 (20%)
-- `input_clarity`: 0.40 (40%)
-- `blast_radius`: 0.40 (40%)
+Adjust weights based on your risk tolerance and priorities. Weights are subject to your implementation requirements.
 
 **High-risk production systems:**
 ```json
 {
-  "blast_radius": 0.5,
-  "data_sensitivity": 0.3,
-  "input_clarity": 0.2
+  "blast_radius": 0.35,
+  "data_sensitivity": 0.25,
+  "input_clarity": 0.15,
+  "context_complexity": 0.15,
+  "legal_ip_risk": 0.05,
+  "model_hallucination": 0.05
 }
 ```
 
 **Experimental features:**
 ```json
 {
-  "blast_radius": 0.3,
-  "data_sensitivity": 0.3,
-  "input_clarity": 0.4
+  "input_clarity": 0.30,
+  "model_hallucination": 0.25,
+  "blast_radius": 0.20,
+  "data_sensitivity": 0.15,
+  "context_complexity": 0.10,
+  "legal_ip_risk": 0.00
 }
 ```
 
 **Security-focused:**
 ```json
 {
-  "data_sensitivity": 0.5,
-  "blast_radius": 0.3,
-  "input_clarity": 0.2
+  "data_sensitivity": 0.40,
+  "legal_ip_risk": 0.25,
+  "blast_radius": 0.20,
+  "input_clarity": 0.10,
+  "model_hallucination": 0.05,
+  "context_complexity": 0.00
 }
 ```
 </Accordion>

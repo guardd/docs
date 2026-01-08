@@ -30,47 +30,32 @@ Example: `"Deploy the updated payment processing code to production"`
 </ParamField>
 
 <ParamField body="weights" type="object">
-Optional custom weights for each risk factor. All weights should sum to 1.0. If not provided, default weights are used.
-
-**Current default weights:**
-- `data_sensitivity`: 0.20 (20%)
-- `input_clarity`: 0.40 (40%)
-- `blast_radius`: 0.40 (40%)
-
-<Note>
-Only the three risk factors listed above are currently active. Additional factors (context_complexity, legal_ip_risk, model_hallucination) are planned for future releases.
-</Note>
+Optional custom weights for each risk factor. All weights should sum to 1.0. Weights are subject to your implementation requirements.
 
 <Expandable title="Weight Configuration">
-  <ParamField body="weights.data_sensitivity" type="number" default="0.20">
-  Weight for data sensitivity score (0-1). Currently active.
+  <ParamField body="weights.data_sensitivity" type="number">
+  Weight for data sensitivity score (0-1)
   </ParamField>
-
   
-  <ParamField body="weights.input_clarity" type="number" default="0.40">
-  Weight for input clarity score (0-1). Currently active.
+  <ParamField body="weights.input_clarity" type="number">
+  Weight for input clarity score (0-1)
   </ParamField>
-
   
-  <ParamField body="weights.blast_radius" type="number" default="0.40">
-  Weight for blast radius score (0-1). Currently active (requires context).
+  <ParamField body="weights.blast_radius" type="number">
+  Weight for blast radius score (0-1, requires context)
   </ParamField>
-
   
   <ParamField body="weights.context_complexity" type="number">
-  Weight for context complexity score (0-1). Coming in future release.
+  Weight for context complexity score (0-1)
   </ParamField>
-
   
   <ParamField body="weights.legal_ip_risk" type="number">
-  Weight for legal/IP risk score (0-1). Coming in future release.
+  Weight for legal/IP risk score (0-1)
   </ParamField>
-
   
   <ParamField body="weights.model_hallucination" type="number">
-  Weight for model hallucination risk score (0-1). Coming in future release.
+  Weight for model hallucination risk score (0-1)
   </ParamField>
-
 </Expandable>
 
 <Warning>
@@ -405,15 +390,14 @@ The overall score focuses on available risk factors. Always review the `recommen
 </Accordion>
 
 <Accordion title="Custom weights">
-Adjust weights based on your use case. Default weights are:
-- `data_sensitivity`: 0.20 (20%)
-- `input_clarity`: 0.40 (40%)
-- `blast_radius`: 0.40 (40%)
+Adjust weights based on your use case and risk tolerance. Weights are subject to your implementation requirements.
 
 Customize for specific scenarios:
-- **High-security applications**: Increase `data_sensitivity` to 0.4-0.5
-- **Production systems with context**: Increase `blast_radius` to 0.5
-- **Unclear prompts common**: Increase `input_clarity` to 0.5
+- **High-security applications**: Increase `data_sensitivity` weight (e.g., 0.4-0.5)
+- **Production systems with dependencies**: Increase `blast_radius` weight (e.g., 0.5)
+- **Unclear prompts common**: Increase `input_clarity` weight (e.g., 0.5)
+- **Complex contexts**: Increase `context_complexity` weight
+- **Legal-sensitive domains**: Increase `legal_ip_risk` weight
 
 Ensure all weights sum to 1.0. If unavailable factors have weights, the API redistributes automatically:
 - 1 available: Gets 100%
