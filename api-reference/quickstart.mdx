@@ -52,7 +52,7 @@ Let's assess a simple prompt to see the API in action.
 <CodeGroup>
 
 ```bash cURL
-curl -X POST 'https://app.orcho.ai/api/v1/generate-risk' \
+curl -X POST 'https://app.orcho.ai/risk/api/v1/generate-risk' \
   -H 'Authorization: Bearer YOUR_API_KEY' \
   -H 'Content-Type: application/json' \
   -d '{
@@ -68,7 +68,7 @@ import os
 API_KEY = os.environ.get('ORCHO_API_KEY')
 
 response = requests.post(
-    'https://api.orcho.ai/api/v1/generate-risk',
+    'https://api.orcho.ai/risk/api/v1/generate-risk',
     headers={
         'Authorization': f'Bearer {API_KEY}',
         'Content-Type': 'application/json'
@@ -87,7 +87,7 @@ print(f"Risk Level: {result['overall_risk_level']}")
 ```javascript JavaScript
 const API_KEY = process.env.ORCHO_API_KEY;
 
-const response = await fetch('https://api.orcho.ai/api/v1/generate-risk', {
+const response = await fetch('https://api.orcho.ai/risk/api/v1/generate-risk', {
   method: 'POST',
   headers: {
     'Authorization': `Bearer ${API_KEY}`,
@@ -214,7 +214,7 @@ import os
 API_KEY = os.environ.get('ORCHO_API_KEY')
 
 response = requests.post(
-    'https://app.orcho.ai/api/v1/generate-risk-with-context',
+    'https://app.orcho.ai/risk/api/v1/generate-risk-with-context',
     headers={
         'Authorization': f'Bearer {API_KEY}',
         'Content-Type': 'application/json'
@@ -253,7 +253,7 @@ if 'blast_radius' in result['scores']:
 ```javascript JavaScript
 const API_KEY = process.env.ORCHO_API_KEY;
 
-const response = await fetch('https://api.orcho.ai/api/v1/generate-risk-with-context', {
+const response = await fetch('https://api.orcho.ai/risk/api/v1/generate-risk-with-context', {
   method: 'POST',
   headers: {
     'Authorization': `Bearer ${API_KEY}`,
