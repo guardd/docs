@@ -18,19 +18,18 @@ Use this endpoint when you need to:
 ## Authentication
 
 <ParamField header="Authorization" type="string" required>
-  Bearer token for API authentication. Format: `Bearer YOUR_API_KEY`
+Bearer token for API authentication. Format: `Bearer YOUR_API_KEY`
 </ParamField>
 
 ## Request Body
 
 <ParamField body="prompt" type="string" required>
-  The AI prompt or task description to assess for risk.
+The AI prompt or task description to assess for risk.
 
-  Example: `"Deploy the updated payment processing code to production"`
+Example: `"Deploy the updated payment processing code to production"`
 </ParamField>
 
 <ParamField body="weights" type="object">
-<<<<<<< HEAD
 Optional custom weights for each risk factor. All weights should sum to 1.0. If not provided, default weights are used.
 
 **Current default weights:**
@@ -46,80 +45,62 @@ Only the three risk factors listed above are currently active. Additional factor
   <ParamField body="weights.data_sensitivity" type="number" default="0.20">
   Weight for data sensitivity score (0-1). Currently active.
   </ParamField>
+
   
   <ParamField body="weights.input_clarity" type="number" default="0.40">
   Weight for input clarity score (0-1). Currently active.
   </ParamField>
+
   
   <ParamField body="weights.blast_radius" type="number" default="0.40">
   Weight for blast radius score (0-1). Currently active (requires context).
   </ParamField>
+
   
   <ParamField body="weights.context_complexity" type="number">
   Weight for context complexity score (0-1). Coming in future release.
   </ParamField>
+
   
   <ParamField body="weights.legal_ip_risk" type="number">
   Weight for legal/IP risk score (0-1). Coming in future release.
   </ParamField>
+
   
   <ParamField body="weights.model_hallucination" type="number">
   Weight for model hallucination risk score (0-1). Coming in future release.
   </ParamField>
+
 </Expandable>
 
 <Warning>
 If some risk factors cannot be computed, the API automatically redistributes weights among available factors. The response includes both `weights` (actual used) and `original_weights` (your provided values).
 </Warning>
-=======
-  Optional custom weights for each risk factor. All weights should sum to 1.0.
 
-  <Expandable title="Weight Configuration">
-    <ParamField body="weights.data_sensitivity" default="0.2" type="number">
-      Weight for data sensitivity score (0-1)
-    </ParamField>
-    <ParamField body="weights.input_clarity" default="0.15" type="number">
-      Weight for input clarity score (0-1)
-    </ParamField>
-    <ParamField body="weights.blast_radius" default="0.2" type="number">
-      Weight for blast radius score (0-1)
-    </ParamField>
-    <ParamField body="weights.context_complexity" default="0.15" type="number">
-      Weight for context complexity score (0-1)
-    </ParamField>
-    <ParamField body="weights.legal_ip_risk" default="0.15" type="number">
-      Weight for legal/IP risk score (0-1)
-    </ParamField>
-    <ParamField body="weights.model_hallucination" default="0.15" type="number">
-      Weight for model hallucination risk score (0-1)
-    </ParamField>
-  </Expandable>
->>>>>>> b63bbd13f43e47d11e5894688c81405998a982e7
 </ParamField>
 
 ## Response
 
 <ResponseField name="success" type="boolean" required>
-  Indicates whether the request was successful
+Indicates whether the request was successful
 </ResponseField>
 
 <ResponseField name="timestamp" type="string" required>
-  ISO 8601 formatted timestamp of when the assessment was performed
+ISO 8601 formatted timestamp of when the assessment was performed
 </ResponseField>
 
 <ResponseField name="overall_score" type="number" required>
-<<<<<<< HEAD
 Aggregate risk score from **0.0 to 1.0** (decimal), where higher values indicate greater risk. Example: 0.65 means high risk.
 </ResponseField>
 
 <ResponseField name="overall_risk_level" type="string" required>
 Risk classification: `"minimal"`, `"low"`, `"medium"`, `"high"`, or `"critical"`
 
-- `"minimal"`: score < 0.2
-- `"low"`: 0.2 ≤ score < 0.4
-- `"medium"`: 0.4 ≤ score < 0.6
-- `"high"`: 0.6 ≤ score < 0.8
-- `"critical"`: score ≥ 0.8
+- `"minimal"`: score &lt; 0.2
+- `"low"`: 0.2 ≤ score &lt; 0.4
+- `"medium"`: 0.4 ≤ score &lt; 0.6
+- `"high"`: 0.6 ≤ score &lt; 0.8
+- `"critical"`: score &ge; 0.8
 </ResponseField>
 
 <ResponseField name="recommendations" type="array" required>
@@ -138,19 +119,23 @@ Individual risk factor scores (0.0-1.0). **Only includes successfully computed f
   <ResponseField name="scores.data_sensitivity" type="number">
   Data sensitivity score (0.0-1.0). Included when computed successfully.
   </ResponseField>
+
   
   <ResponseField name="scores.input_clarity" type="number">
   Input clarity score (0.0-1.0). Included when computed successfully.
   </ResponseField>
+
   
   <ResponseField name="scores.blast_radius" type="number | omitted">
   Blast radius score (0.0-1.0). Omitted when no context provided or computation fails.
   </ResponseField>
+
 </Expandable>
 
 <Note>
 Unavailable risk factors are not included in the scores object. Check `unavailable_parameters` for details on why factors were omitted.
 </Note>
+
 </ResponseField>
 
 <ResponseField name="computations" type="object" required>
@@ -166,66 +151,23 @@ When factors are unavailable, weights are redistributed:
 - 2 factors: 65% and 35%
 - 3 factors: 65%, 25%, and 10%
 </Note>
+
 </ResponseField>
 
 <ResponseField name="original_weights" type="object" required>
 The weights you provided (or defaults) before any redistribution. Use this to compare against `weights` to see if redistribution occurred.
-=======
-  Aggregate risk score from 0-100, where higher values indicate greater risk
-</ResponseField>
-
-<ResponseField name="overall_risk_level" type="string" required>
-  Risk classification: `"low"`, `"medium"`, `"high"`, or `"critical"`
-</ResponseField>
-
-<ResponseField name="recommendations" type="array" required>
-  List of actionable recommendations based on identified risks
-</ResponseField>
-
-<ResponseField name="scores" type="object" required>
-  Breakdown of individual risk factor scores
-
-  <Expandable title="Risk Factor Scores">
-    <ResponseField name="scores.data_sensitivity" type="number">
-      Score for data sensitivity (0-100)
-    </ResponseField>
-    <ResponseField name="scores.input_clarity" type="number">
-      Score for input clarity (0-100)
-    </ResponseField>
-    <ResponseField name="scores.blast_radius" type="number | null">
-      Score for blast radius (0-100). Null when no context provided.
-    </ResponseField>
-    <ResponseField name="scores.context_complexity" type="number | null">
-      Score for context complexity (0-100). Null when no context provided.
-    </ResponseField>
-    <ResponseField name="scores.legal_ip_risk" type="number">
-      Score for legal/IP risk (0-100)
-    </ResponseField>
-    <ResponseField name="scores.model_hallucination" type="number">
-      Score for model hallucination risk (0-100)
-    </ResponseField>
-  </Expandable>
-</ResponseField>
-
-<ResponseField name="computations" type="object" required>
-  Detailed computation results for each risk factor including reasoning and evidence
-</ResponseField>
-
-<ResponseField name="weights" type="object" required>
-  The weights used in the calculation (either provided or default values)
->>>>>>> b63bbd13f43e47d11e5894688c81405998a982e7
 </ResponseField>
 
 <ResponseField name="prompt" type="string" required>
-  Echo of the original prompt that was assessed
+Echo of the original prompt that was assessed
 </ResponseField>
 
 <ResponseField name="current_file" type="string | null">
-  Always null for this endpoint (context not provided)
+Always null for this endpoint (context not provided)
 </ResponseField>
 
 <ResponseField name="repo_full_name" type="string | null">
-  Always null for this endpoint (context not provided)
+Always null for this endpoint (context not provided)
 </ResponseField>
 
 <ResponseField name="available_parameters" type="array">
@@ -241,7 +183,6 @@ Example: `{"blast_radius": "current_file and dependency_graph required"}`
 ## Example Request
 
 <RequestExample>
-
 ```bash cURL
 curl -X POST 'https://api.orcho.ai/api/v1/generate-risk' \
   -H 'Authorization: Bearer YOUR_API_KEY' \
@@ -255,7 +196,6 @@ curl -X POST 'https://api.orcho.ai/api/v1/generate-risk' \
     }
   }'
 ```
-
 
 ```python Python
 import requests
@@ -279,7 +219,6 @@ response = requests.post(url, headers=headers, json=data)
 result = response.json()
 ```
 
-
 ```javascript JavaScript
 const response = await fetch('https://api.orcho.ai/api/v1/generate-risk', {
   method: 'POST',
@@ -299,13 +238,11 @@ const response = await fetch('https://api.orcho.ai/api/v1/generate-risk', {
 
 const result = await response.json();
 ```
-
 </RequestExample>
 
 ## Example Response
 
 <ResponseExample>
-
 ```json Success - Low Risk
 {
   "success": true,
@@ -358,7 +295,6 @@ const result = await response.json();
   ]
 }
 ```
-
 
 ```json Success - High Risk
 {
@@ -413,7 +349,6 @@ const result = await response.json();
 }
 ```
 
-
 ```json Error - Bad Request
 {
   "success": false,
@@ -425,7 +360,6 @@ const result = await response.json();
 }
 ```
 
-
 ```json Error - Unauthorized
 {
   "success": false,
@@ -436,34 +370,31 @@ const result = await response.json();
   }
 }
 ```
-
 </ResponseExample>
 
 ## Best Practices
 
 <AccordionGroup>
-  <Accordion title="When to use this endpoint">
-    This endpoint is ideal for quick risk assessments when you don't have code context available. Use it for:
 
-    - Screening user-submitted prompts
-    - Validating prompts before sending to AI models
-    - Quick safety checks in interactive applications
-    - Batch processing of prompt libraries
+<Accordion title="When to use this endpoint">
+This endpoint is ideal for quick risk assessments when you don't have code context available. Use it for:
 
-    For more accurate assessments involving code changes, use the [Generate Risk with Context](/api-reference/generate-risk-with-context) endpoint instead.
-  </Accordion>
-  <Accordion title="Interpreting risk scores">
-    Risk scores are weighted averages of individual risk factors. When context is not provided:
+- Screening user-submitted prompts
+- Validating prompts before sending to AI models
+- Quick safety checks in interactive applications
+- Batch processing of prompt libraries
 
-<<<<<<< HEAD
+For more accurate assessments involving code changes, use the [Generate Risk with Context](/api-reference/generate-risk-with-context) endpoint instead.
+</Accordion>
+
 <Accordion title="Interpreting risk scores">
 Risk scores are weighted averages of individual risk factors on a 0.0-1.0 scale:
 
-- **< 0.2**: Minimal risk - safe to proceed automatically
+- **&lt; 0.2**: Minimal risk - safe to proceed automatically
 - **0.2 - 0.39**: Low risk - monitor
 - **0.4 - 0.59**: Medium risk - review recommended
 - **0.6 - 0.79**: High risk - review required
-- **≥ 0.8**: Critical risk - block execution
+- **&ge; 0.8**: Critical risk - block execution
 
 When context is not provided:
 - `blast_radius` will be unavailable and excluded from scores
@@ -504,39 +435,7 @@ else:
 
 Common errors include missing API keys, empty prompts, and invalid weight configurations.
 </Accordion>
-=======
-    - `blast_radius` and `context_complexity` scores will be null
-    - The overall score focuses on prompt-level risks
-    - Lower scores (0-25) indicate safer prompts
-    - Higher scores (76-100) require immediate attention
 
-    Always review the `recommendations` array for specific actions to take.
-  </Accordion>
-  <Accordion title="Custom weights">
-    Adjust weights based on your use case:
-
-    - **High-security applications**: Increase `data_sensitivity` weight to 0.3-0.4
-    - **Production systems**: Increase `blast_radius` weight when using the context endpoint
-    - **Content generation**: Increase `model_hallucination` weight to 0.25
-    - **Legal-sensitive domains**: Increase `legal_ip_risk` weight to 0.25
-
-    Ensure all weights sum to 1.0 for accurate scoring.
-  </Accordion>
-  <Accordion title="Handling errors">
-    Always check the `success` field before processing results:
-
-    ```python
-    if result['success']:
-        risk_score = result['overall_score']
-        recommendations = result['recommendations']
-    else:
-        error_message = result['error']
-        # Handle error appropriately
-    ```
-
-    Common errors include missing API keys, empty prompts, and invalid weight configurations.
-  </Accordion>
->>>>>>> b63bbd13f43e47d11e5894688c81405998a982e7
 </AccordionGroup>
 
 ## Rate Limiting
@@ -548,9 +447,5 @@ This endpoint is subject to rate limiting. If you need to process high volumes o
 - Contacting support for higher rate limits
 
 <Warning>
-<<<<<<< HEAD
 Rate limit: 100 requests per minute per API key. Exceeding this limit results in HTTP 429 responses.
-=======
-  Rate limit: 100 requests per minute per API key. Exceeding this limit results in HTTP 429 responses.
->>>>>>> b63bbd13f43e47d11e5894688c81405998a982e7
 </Warning>
