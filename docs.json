@@ -9,37 +9,21 @@
   },
   "favicon": "/favicon.svg",
   "navigation": {
+    "global": {
+      "anchors": [
+        {
+          "anchor": "Dashboard",
+          "icon": "chart-line",
+          "href": "https://app.orcho.ai"
+        },
+        {
+          "anchor": "Support",
+          "icon": "envelope",
+          "href": "mailto:support@orcho.ai"
+        }
+      ]
+    },
     "tabs": [
-      {
-        "tab": "Documentation",
-        "groups": [
-          {
-            "group": "Getting Started",
-            "pages": [
-              "index",
-              "quickstart",
-              "authentication"
-            ]
-          },
-          {
-            "group": "Core Concepts",
-            "pages": [
-              "concepts/risk-scoring",
-              "concepts/dependency-graphs",
-              "concepts/feature-weights"
-            ]
-          },
-          {
-            "group": "Guides",
-            "pages": [
-              "guides/integration",
-              "guides/error-handling",
-              "guides/rate-limits",
-              "guides/best-practices"
-            ]
-          }
-        ]
-      },
       {
         "tab": "API Reference",
         "groups": [
@@ -71,21 +55,7 @@
           "integrations/cursor"
         ]
       }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Dashboard",
-          "href": "https://app.orcho.ai",
-          "icon": "chart-line"
-        },
-        {
-          "anchor": "Support",
-          "href": "mailto:support@orcho.ai",
-          "icon": "envelope"
-        }
-      ]
-    }
+    ]
   },
   "logo": {
     "light": "/logo/light.svg",
