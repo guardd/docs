@@ -11,14 +11,6 @@
   "navigation": {
     "tabs": [
       {
-        "tab": "Integrations",
-        "pages": [
-          "integrations/cursor",
-          "integrations/jira",
-          "integrations/browser"
-        ]
-      },
-      {
         "tab": "API Reference",
         "groups": [
           {
@@ -41,6 +33,14 @@
               "api-reference/error-handling"
             ]
           }
+        ]
+      },
+      {
+        "tab": "Integrations",
+        "pages": [
+          "integrations/cursor",
+          "integrations/jira",
+          "integrations/browser"
         ]
       }
     ],
