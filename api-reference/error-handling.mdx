@@ -23,35 +23,35 @@ All error responses follow a consistent structure:
 ```
 
 <ResponseField name="success" type="boolean">
-Always `false` for error responses
+  Always `false` for error responses
 </ResponseField>
 
 <ResponseField name="error" type="string">
-Human-readable description of what went wrong
+  Human-readable description of what went wrong
 </ResponseField>
 
 <ResponseField name="error_code" type="string">
-Machine-readable error code (format: `HTTP_XXX`)
+  Machine-readable error code (format: `HTTP_XXX`)
 </ResponseField>
 
 <ResponseField name="details" type="object">
-Additional context about the error, including the HTTP status code and other relevant information
+  Additional context about the error, including the HTTP status code and other relevant information
 </ResponseField>
 
 ## HTTP Status Codes
 
 The API uses standard HTTP status codes to indicate the success or failure of requests:
 
-| Status Code | Meaning | When It Occurs |
-|------------|---------|----------------|
-| 200 | Success | Request processed successfully |
-| 400 | Bad Request | Invalid request format or parameters |
-| 401 | Unauthorized | Missing or invalid API key |
-| 403 | Forbidden | Valid key but insufficient permissions |
-| 404 | Not Found | Resource doesn't exist |
-| 429 | Too Many Requests | Rate limit exceeded |
-| 500 | Internal Server Error | Server-side error |
-| 503 | Service Unavailable | API temporarily unavailable |
+| Status Code | Meaning               | When It Occurs                         |
+| ----------- | --------------------- | -------------------------------------- |
+| 200         | Success               | Request processed successfully         |
+| 400         | Bad Request           | Invalid request format or parameters   |
+| 401         | Unauthorized          | Missing or invalid API key             |
+| 403         | Forbidden             | Valid key but insufficient permissions |
+| 404         | Not Found             | Resource doesn't exist                 |
+| 429         | Too Many Requests     | Rate limit exceeded                    |
+| 500         | Internal Server Error | Server-side error                      |
+| 503         | Service Unavailable   | API temporarily unavailable            |
 
 ## Common Errors
 
@@ -60,104 +60,108 @@ The API uses standard HTTP status codes to indicate the success or failure of re
 The request contains invalid data or missing required fields.
 
 <AccordionGroup>
-<Accordion title="Missing Required Fields">
-**Error:**
-```json
-{
-  "success": false,
-  "error": "Prompt is required and cannot be empty",
-  "error_code": "HTTP_400",
-  "details": {
-    "status_code": 400
-  }
-}
-```
+  <Accordion title="Missing Required Fields">
+    **Error:**
 
-**Cause:** The `prompt` field is missing or empty.
+    ```json
+    {
+      "success": false,
+      "error": "Prompt is required and cannot be empty",
+      "error_code": "HTTP_400",
+      "details": {
+        "status_code": 400
+      }
+    }
+    ```
 
-**Solution:**
-```python
-# ❌ Missing prompt
-data = {}
+    **Cause:** The `prompt` field is missing or empty.
 
-# ✅ Include prompt
-data = {
-    "prompt": "Your task description here"
-}
-```
-</Accordion>
+    **Solution:**
 
-<Accordion title="Invalid Weight Configuration">
-**Error:**
-```json
-{
-  "success": false,
-  "error": "Weights must sum to 1.0",
-  "error_code": "HTTP_400",
-  "details": {
-    "status_code": 400,
-    "provided_sum": 0.85
-  }
-}
-```
+    ```python
+    # ❌ Missing prompt
+    data = {}
+    
+    # ✅ Include prompt
+    data = {
+        "prompt": "Your task description here"
+    }
+    ```
+  </Accordion>
+  <Accordion title="Invalid Weight Configuration">
+    **Error:**
 
-**Cause:** Custom weights don't sum to 1.0.
+    ```json
+    {
+      "success": false,
+      "error": "Weights must sum to 1.0",
+      "error_code": "HTTP_400",
+      "details": {
+        "status_code": 400,
+        "provided_sum": 0.85
+      }
+    }
+    ```
 
-**Solution:**
-```python
-# ❌ Invalid weights (sum = 0.85)
-weights = {
-    "data_sensitivity": 0.2,
-    "input_clarity": 0.15,
-    "blast_radius": 0.2,
-    "context_complexity": 0.15,
-    "legal_ip_risk": 0.15
-    # Missing model_hallucination
-}
+    **Cause:** Custom weights don't sum to 1.0.
 
-# ✅ Valid weights (sum = 1.0)
-weights = {
-    "data_sensitivity": 0.2,
-    "input_clarity": 0.15,
-    "blast_radius": 0.2,
-    "context_complexity": 0.15,
-    "legal_ip_risk": 0.15,
-    "model_hallucination": 0.15
-}
-```
-</Accordion>
+    **Solution:**
 
-<Accordion title="Invalid Context Format">
-**Error:**
-```json
-{
-  "success": false,
-  "error": "Invalid repository format. Use 'owner/repo'",
-  "error_code": "HTTP_400",
-  "details": {
-    "status_code": 400,
-    "provided": "myrepo"
-  }
-}
-```
+    ```python
+    # ❌ Invalid weights (sum = 0.85)
+    weights = {
+        "data_sensitivity": 0.2,
+        "input_clarity": 0.15,
+        "blast_radius": 0.2,
+        "context_complexity": 0.15,
+        "legal_ip_risk": 0.15
+        # Missing model_hallucination
+    }
+    
+    # ✅ Valid weights (sum = 1.0)
+    weights = {
+        "data_sensitivity": 0.2,
+        "input_clarity": 0.15,
+        "blast_radius": 0.2,
+        "context_complexity": 0.15,
+        "legal_ip_risk": 0.15,
+        "model_hallucination": 0.15
+    }
+    ```
+  </Accordion>
+  <Accordion title="Invalid Context Format">
+    **Error:**
 
-**Cause:** Repository name isn't in `owner/repo` format.
+    ```json
+    {
+      "success": false,
+      "error": "Invalid repository format. Use 'owner/repo'",
+      "error_code": "HTTP_400",
+      "details": {
+        "status_code": 400,
+        "provided": "myrepo"
+      }
+    }
+    ```
 
-**Solution:**
-```python
-# ❌ Invalid format
-context = {
-    "repo_full_name": "myrepo",
-    "current_file": "src/main.py"
-}
+    **Cause:** Repository name isn't in `owner/repo` format.
 
-# ✅ Correct format
-context = {
-    "repo_full_name": "mycompany/myrepo",
-    "current_file": "src/main.py"
-}
-```
-</Accordion>
+    **Solution:**
+
+    ```python
+    # ❌ Invalid format
+    context = {
+        "repo_full_name": "myrepo",
+        "current_file": "src/main.py"
+    }
+    
+    # ✅ Correct format
+    context = {
+        "repo_full_name": "mycompany/myrepo",
+        "current_file": "src/main.py"
+    }
+    ```
+  </Accordion>
 </AccordionGroup>
 
 ### 401 Unauthorized
@@ -165,90 +169,94 @@ context = {
 Authentication failed or API key is invalid.
 
 <AccordionGroup>
-<Accordion title="Missing API Key">
-**Error:**
-```json
-{
-  "success": false,
-  "error": "API key is required",
-  "error_code": "HTTP_401",
-  "details": {
-    "status_code": 401
-  }
-}
-```
+  <Accordion title="Missing API Key">
+    **Error:**
 
-**Cause:** No Authorization header provided.
+    ```json
+    {
+      "success": false,
+      "error": "API key is required",
+      "error_code": "HTTP_401",
+      "details": {
+        "status_code": 401
+      }
+    }
+    ```
 
-**Solution:**
-```python
-# ❌ Missing authorization
-headers = {
-    'Content-Type': 'application/json'
-}
+    **Cause:** No Authorization header provided.
 
-# ✅ Include authorization
-headers = {
-    'Authorization': f'Bearer {API_KEY}',
-    'Content-Type': 'application/json'
-}
-```
-</Accordion>
+    **Solution:**
 
-<Accordion title="Invalid API Key">
-**Error:**
-```json
-{
-  "success": false,
-  "error": "Invalid API key",
-  "error_code": "HTTP_401",
-  "details": {
-    "status_code": 401
-  }
-}
-```
+    ```python
+    # ❌ Missing authorization
+    headers = {
+        'Content-Type': 'application/json'
+    }
+    
+    # ✅ Include authorization
+    headers = {
+        'Authorization': f'Bearer {API_KEY}',
+        'Content-Type': 'application/json'
+    }
+    ```
+  </Accordion>
+  <Accordion title="Invalid API Key">
+    **Error:**
 
-**Cause:** API key is incorrect, expired, or revoked.
+    ```json
+    {
+      "success": false,
+      "error": "Invalid API key",
+      "error_code": "HTTP_401",
+      "details": {
+        "status_code": 401
+      }
+    }
+    ```
 
-**Solution:**
-- Verify your API key in the dashboard
-- Generate a new key if the current one is expired
-- Check for typos or extra whitespace in the key
-</Accordion>
+    **Cause:** API key is incorrect, expired, or revoked.
 
-<Accordion title="Malformed Authorization Header">
-**Error:**
-```json
-{
-  "success": false,
-  "error": "Authorization header must be 'Bearer YOUR_API_KEY'",
-  "error_code": "HTTP_401",
-  "details": {
-    "status_code": 401
-  }
-}
-```
+    **Solution:**
 
-**Cause:** Authorization header format is incorrect.
+    - Verify your API key in the dashboard
+    - Generate a new key if the current one is expired
+    - Check for typos or extra whitespace in the key
+  </Accordion>
+  <Accordion title="Malformed Authorization Header">
+    **Error:**
 
-**Solution:**
-```python
-# ❌ Incorrect format
-headers = {
-    'Authorization': f'{API_KEY}'  # Missing "Bearer"
-}
+    ```json
+    {
+      "success": false,
+      "error": "Authorization header must be 'Bearer YOUR_API_KEY'",
+      "error_code": "HTTP_401",
+      "details": {
+        "status_code": 401
+      }
+    }
+    ```
 
-# ❌ Incorrect format
-headers = {
-    'Authorization': f'Token {API_KEY}'  # Wrong prefix
-}
+    **Cause:** Authorization header format is incorrect.
 
-# ✅ Correct format
-headers = {
-    'Authorization': f'Bearer {API_KEY}'
-}
-```
-</Accordion>
+    **Solution:**
+
+    ```python
+    # ❌ Incorrect format
+    headers = {
+        'Authorization': f'{API_KEY}'  # Missing "Bearer"
+    }
+    
+    # ❌ Incorrect format
+    headers = {
+        'Authorization': f'Token {API_KEY}'  # Wrong prefix
+    }
+    
+    # ✅ Correct format
+    headers = {
+        'Authorization': f'Bearer {API_KEY}'
+    }
+    ```
+  </Accordion>
 </AccordionGroup>
 
 ### 429 Rate Limit Exceeded
@@ -256,6 +264,7 @@ headers = {
 You've exceeded the API rate limits.
 
 **Error:**
+
 ```json
 {
   "success": false,
@@ -274,6 +283,7 @@ You've exceeded the API rate limits.
 **Solution:** Implement exponential backoff and respect rate limits.
 
 <CodeGroup>
+
 ```python Python with Retry Logic
 import time
 import requests
@@ -304,6 +314,7 @@ response = session.post(
     json=data
 )
 ```
+
 
 ```python Python Manual Retry
 import time
@@ -336,6 +347,7 @@ def assess_risk_with_retry(prompt, max_retries=3):
     
     raise Exception("Max retries exceeded")
 ```
+
 
 ```javascript JavaScript with Retry
 async function assessRiskWithRetry(prompt, maxRetries = 3) {
@@ -370,10 +382,11 @@ async function assessRiskWithRetry(prompt, maxRetries = 3) {
   }
 }
 ```
+
 </CodeGroup>
 
 <Tip>
-Contact support@orcho.ai to discuss higher rate limits for enterprise usage.
+  Contact [support@orcho.ai](mailto:support@orcho.ai) to discuss higher rate limits for enterprise usage.
 </Tip>
 
 ### 500 Internal Server Error
@@ -381,6 +394,7 @@ Contact support@orcho.ai to discuss higher rate limits for enterprise usage.
 A server-side error occurred.
 
 **Error:**
+
 ```json
 {
   "success": false,
@@ -396,6 +410,7 @@ A server-side error occurred.
 **Cause:** Server encountered an unexpected error.
 
 **Solution:**
+
 - Retry the request after a brief delay
 - Check API status at status.orcho.ai
 - Contact support if the issue persists
@@ -404,91 +419,88 @@ A server-side error occurred.
 ## Error Handling Best Practices
 
 <Steps>
-<Step title="Always check the success field">
-Never assume a request succeeded. Always verify the `success` field:
+  <Step title="Always check the success field">
+    Never assume a request succeeded. Always verify the `success` field:
 
-```python
-response = requests.post(url, headers=headers, json=data)
-result = response.json()
-
-if result.get('success'):
-    # Process successful response
-    risk_score = result['overall_score']
-else:
-    # Handle error
-    error_msg = result.get('error', 'Unknown error')
-    logging.error(f"Risk assessment failed: {error_msg}")
-```
-</Step>
-
-<Step title="Implement proper exception handling">
-Wrap API calls in try-except blocks:
-
-```python
-try:
-    response = requests.post(url, headers=headers, json=data, timeout=30)
-    response.raise_for_status()
+    ```python
+    response = requests.post(url, headers=headers, json=data)
     result = response.json()
     
-    if not result.get('success'):
-        handle_api_error(result)
-    
-    return result
-    
-except requests.exceptions.Timeout:
-    # Handle timeout
-    logging.error("Request timed out")
-    
-except requests.exceptions.ConnectionError:
-    # Handle connection errors
-    logging.error("Connection failed")
-    
-except requests.exceptions.HTTPError as e:
-    # Handle HTTP errors
-    logging.error(f"HTTP error: {e.response.status_code}")
-    
-except Exception as e:
-    # Handle unexpected errors
-    logging.error(f"Unexpected error: {str(e)}")
-```
-</Step>
+    if result.get('success'):
+        # Process successful response
+        risk_score = result['overall_score']
+    else:
+        # Handle error
+        error_msg = result.get('error', 'Unknown error')
+        logging.error(f"Risk assessment failed: {error_msg}")
+    ```
+  </Step>
+  <Step title="Implement proper exception handling">
+    Wrap API calls in try-except blocks:
 
-<Step title="Log errors with context">
-Include relevant context when logging errors:
-
-```python
-def assess_risk(prompt, context=None):
+    ```python
     try:
-        response = make_api_request(prompt, context)
-        return response
+        response = requests.post(url, headers=headers, json=data, timeout=30)
+        response.raise_for_status()
+        result = response.json()
+        
+        if not result.get('success'):
+            handle_api_error(result)
+        
+        return result
+        
+    except requests.exceptions.Timeout:
+        # Handle timeout
+        logging.error("Request timed out")
+        
+    except requests.exceptions.ConnectionError:
+        # Handle connection errors
+        logging.error("Connection failed")
+        
+    except requests.exceptions.HTTPError as e:
+        # Handle HTTP errors
+        logging.error(f"HTTP error: {e.response.status_code}")
+        
     except Exception as e:
-        logging.error(
-            "Risk assessment failed",
-            extra={
-                'prompt_length': len(prompt),
-                'has_context': context is not None,
-                'error': str(e),
-                'timestamp': datetime.now().isoformat()
-            }
-        )
-        raise
-```
-</Step>
+        # Handle unexpected errors
+        logging.error(f"Unexpected error: {str(e)}")
+    ```
+  </Step>
+  <Step title="Log errors with context">
+    Include relevant context when logging errors:
 
-<Step title="Provide fallback behavior">
-Handle errors gracefully with sensible defaults:
+    ```python
+    def assess_risk(prompt, context=None):
+        try:
+            response = make_api_request(prompt, context)
+            return response
+        except Exception as e:
+            logging.error(
+                "Risk assessment failed",
+                extra={
+                    'prompt_length': len(prompt),
+                    'has_context': context is not None,
+                    'error': str(e),
+                    'timestamp': datetime.now().isoformat()
+                }
+            )
+            raise
+    ```
+  </Step>
+  <Step title="Provide fallback behavior">
+    Handle errors gracefully with sensible defaults:
 
-```python
-def get_risk_score(prompt, default_score=50):
-    """Get risk score with fallback to default"""
-    try:
-        result = assess_risk(prompt)
-        return result['overall_score']
-    except Exception as e:
-        logging.warning(f"Using default risk score due to error: {e}")
-        return default_score
-```
-</Step>
+    ```python
+    def get_risk_score(prompt, default_score=50):
+        """Get risk score with fallback to default"""
+        try:
+            result = assess_risk(prompt)
+            return result['overall_score']
+        except Exception as e:
+            logging.warning(f"Using default risk score due to error: {e}")
+            return default_score
+    ```
+  </Step>
 </Steps>
 
 ## Validation Errors
@@ -496,6 +508,7 @@ def get_risk_score(prompt, default_score=50):
 Input validation errors provide specific details about what's wrong:
 
 <ResponseExample>
+
 ```json Invalid Prompt Type
 {
   "success": false,
@@ -510,6 +523,7 @@ Input validation errors provide specific details about what's wrong:
 }
 ```
 
+
 ```json Missing Context Fields
 {
   "success": false,
@@ -521,6 +535,7 @@ Input validation errors provide specific details about what's wrong:
   }
 }
 ```
+
 
 ```json Invalid Weight Value
 {
@@ -535,6 +550,7 @@ Input validation errors provide specific details about what's wrong:
   }
 }
 ```
+
 </ResponseExample>
 
 ## Testing Error Handling
@@ -542,6 +558,7 @@ Input validation errors provide specific details about what's wrong:
 Test your error handling with these scenarios:
 
 <CodeGroup>
+
 ```python Test Invalid API Key
 def test_invalid_api_key():
     """Test behavior with invalid API key"""
@@ -557,6 +574,7 @@ def test_invalid_api_key():
     assert 'Invalid API key' in response.json()['error']
 ```
 
+
 ```python Test Missing Required Fields
 def test_missing_prompt():
     """Test behavior with missing prompt"""
@@ -568,6 +586,7 @@ def test_missing_prompt():
     assert response.json()['success'] is False
     assert 'required' in response.json()['error'].lower()
 ```
+
 
 ```python Test Rate Limiting
 def test_rate_limit():
@@ -583,6 +602,7 @@ def test_rate_limit():
             assert 'retry_after' in result.get('details', {})
             break
 ```
+
 </CodeGroup>
 
 ## Monitoring and Alerting
@@ -640,23 +660,24 @@ except Exception as e:
 If you encounter persistent errors or need help troubleshooting:
 
 <CardGroup cols={2}>
-<Card title="Check API Status" icon="signal" href="https://status.orcho.ai">
-View current API status and incidents
-</Card>
-
-<Card title="Email Support" icon="envelope" href="mailto:support@orcho.ai">
-Contact support@orcho.ai
-</Card>
-
-<Card title="Documentation" icon="book" href="/api-reference/introduction">
-Review API documentation
-</Card>
-
-<Card title="GitHub Issues" icon="github" href="https://github.com/orcho/api-issues">
-Report bugs and issues
-</Card>
+  <Card title="Check API Status" icon="signal" href="https://status.orcho.ai">
+    View current API status and incidents
+  </Card>
+  <Card title="Email Support" icon="envelope" href="mailto:support@orcho.ai">
+    Contact [support@orcho.ai](mailto:support@orcho.ai)
+  </Card>
+  <Card title="Documentation" icon="book" href="/api-reference/introduction">
+    Review API documentation
+  </Card>
+  <Card title="GitHub Issues" icon="github" href="https://github.com/orcho/api-issues">
+    Report bugs and issues
+  </Card>
 </CardGroup>
 
 <Note>
+<<<<<<< HEAD
 When contacting support, include the error message, error code, timestamp, and any relevant request details to help us assist you faster.
+=======
+  When contacting support, include the error message, error code, timestamp, and any relevant request details to help us assist you faster.
+>>>>>>> b63bbd13f43e47d11e5894688c81405998a982e7
 </Note>
