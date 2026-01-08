@@ -11,42 +11,12 @@
   "navigation": {
     "tabs": [
       {
-        "tab": "Documentation",
-        "groups": [
-          {
-            "group": "Getting Started",
-            "pages": [
-              "index",
-              "quickstart",
-              "authentication"
-            ]
-          },
-          {
-            "group": "Core Concepts",
-            "pages": [
-              "concepts/risk-scoring",
-              "concepts/dependency-graphs",
-              "concepts/feature-weights"
-            ]
-          },
-          {
-            "group": "Integrations",
-            "pages": [
-              "integrations/cursor",
-              "integrations/jira",
-              "integrations/browser",
-              "integrations/github"
-            ]
-          },
-          {
-            "group": "Guides",
-            "pages": [
-              "guides/integration",
-              "guides/error-handling",
-              "guides/rate-limits",
-              "guides/best-practices"
-            ]
-          }
+        "tab": "Integrations",
+        "pages": [
+          "integrations/cursor",
+          "integrations/jira",
+          "integrations/browser",
+          "integrations/github"
         ]
       },
       {
