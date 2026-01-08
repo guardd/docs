@@ -98,13 +98,13 @@
     "links": [
       {
         "label": "Blog",
-        "href": "https://orcho.ai/blog"
+        "href": "https://orcho.ai/"
       }
     ],
     "primary": {
       "type": "button",
       "label": "Get API Key",
-      "href": "https://app.orcho.ai/keys"
+      "href": "https://orcho.ai/"
     }
   },
   "contextual": {

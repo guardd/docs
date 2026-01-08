@@ -325,62 +325,68 @@ Enable automatic risk assessment for **all prompts** by adding a Cursor rule to 
     
     ```
 
-    Delete all user records from the database
+    Example:
 
-    ```
-    
-    Cursor should automatically:
-    1. Run `get_repo_name.py` to get your repository name
-    2. Call `@orcho assess_risk` with full context
-    3. Show you the risk assessment before executing anything
-    </Step>
-    
-    <Step title="Restart Cursor">
-    Quit and reopen Cursor to ensure all rules are loaded
-    </Step>
-    
-    </Steps>
-    
-    <Note>
-    The rule format uses the proper API structure with `prompt` and `context` fields, not the deprecated `task` parameter.
-    </Note>
-    
-    ## How It Works
-    
-    ### Context-Aware Assessment
-    
-    The Orcho MCP server automatically gathers context when available:
-    
-    <AccordionGroup>
-    
-    <Accordion title="Repository Name">
-    Extracts the repository name (owner/repo format) by running `python .cursor/scripts/get_repo_name.py`, which parses your git remote URL
-    </Accordion>
-    
-    <Accordion title="Current File">
-    Detects the file currently open in your Cursor editor for targeted risk analysis
-    </Accordion>
-    
-    <Accordion title="Other Files">
-    Analyzes the prompt to determine which files will be modified, providing a complete picture of the change scope
-    </Accordion>
-    
-    <Accordion title="Dependency Graph">
-    Uses project dependency information from the API's database (if available for your repository) to calculate blast radius
-    </Accordion>
-    
-    <Accordion title="Blast Radius">
-    Calculates the scope and impact of proposed changes across your codebase, showing all potentially affected files
-    </Accordion>
-    
-    </AccordionGroup>
-    
-    ### Example Workflow
-    
-    <Steps>
-    
-    <Step title="User writes prompt">
-    ```
+    Prompt: Delete all user records from the database\
+    \
+    Cursor should automatically:\\
+
+    1. Run \`get_repo_name.py\` to get your repository name\\
+    2. Call \`@orcho assess_risk\` with full context\\
+    3. Show you the risk assessment before executing anything\
+       \</Step\>\
+       \
+       \<Step title="Restart Cursor"\>\
+       Quit and reopen Cursor to ensure all rules are loaded\
+       \</Step\>\
+       \
+       \</Steps\>\
+       \
+       \<Note\>\
+       The rule format uses the proper API structure with \`prompt\` and \`context\` fields, not the deprecated \`task\` parameter.\
+       \</Note\>\
+       \\
+
+    ## How It Works\\
+
+    \\
+
+    ### Context-Aware Assessment\\
+
+    \
+    The Orcho MCP server automatically gathers context when available:\
+    \
+    \<AccordionGroup\>\
+    \
+    \<Accordion title="Repository Name"\>\
+    Extracts the repository name (owner/repo format) by running \`python .cursor/scripts/get_repo_name.py\`, which parses your git remote URL\
+    \</Accordion\>\
+    \
+    \<Accordion title="Current File"\>\
+    Detects the file currently open in your Cursor editor for targeted risk analysis\
+    \</Accordion\>\
+    \
+    \<Accordion title="Other Files"\>\
+    Analyzes the prompt to determine which files will be modified, providing a complete picture of the change scope\
+    \</Accordion\>\
+    \
+    \<Accordion title="Dependency Graph"\>\
+    Uses project dependency information from the API's database (if available for your repository) to calculate blast radius\
+    \</Accordion\>\
+    \
+    \<Accordion title="Blast Radius"\>\
+    Calculates the scope and impact of proposed changes across your codebase, showing all potentially affected files\
+    \</Accordion\>\
+    \
+    \</AccordionGroup\>\
+    \\
+
+    ### Example Workflow\\
+
+    \
+    \<Steps\>\
+    \
+    \<Step title="User writes prompt"\>
 
     User: "Delete all user data from the database"
 
