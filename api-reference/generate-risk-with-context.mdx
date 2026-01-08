@@ -199,7 +199,7 @@ Use this endpoint when you need to:
 <RequestExample>
 
 ```bash cURL
-curl -X POST 'https://api.orcho.ai/api/v1/generate-risk-with-context' \
+curl -X POST 'https://app.orcho.ai/api/v1/generate-risk-with-context' \
   -H 'Authorization: Bearer YOUR_API_KEY' \
   -H 'Content-Type: application/json' \
   -d '{
@@ -551,7 +551,7 @@ Blast radius measures how many parts of your codebase could be affected by chang
     
     def assess_risk(file_path, prompt):
         response = requests.post(
-            'https://api.orcho.ai/api/v1/generate-risk-with-context',
+            'https://app.orcho.ai/api/v1/generate-risk-with-context',
             headers={
                 'Authorization': f'Bearer {API_KEY}',
                 'Content-Type': 'application/json'

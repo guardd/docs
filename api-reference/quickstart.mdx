@@ -35,7 +35,7 @@ Before you begin, make sure you have:
     Verify your key works by calling the health check endpoint:
 
     ```bash
-    curl https://api.orcho.ai/health \
+    curl https://app.orcho.ai/health \
       -H 'Authorization: Bearer YOUR_API_KEY'
     ```
 
@@ -52,7 +52,7 @@ Let's assess a simple prompt to see the API in action.
 <CodeGroup>
 
 ```bash cURL
-curl -X POST 'https://api.orcho.ai/api/v1/generate-risk' \
+curl -X POST 'https://app.orcho.ai/api/v1/generate-risk' \
   -H 'Authorization: Bearer YOUR_API_KEY' \
   -H 'Content-Type: application/json' \
   -d '{
@@ -214,7 +214,7 @@ import os
 API_KEY = os.environ.get('ORCHO_API_KEY')
 
 response = requests.post(
-    'https://api.orcho.ai/api/v1/generate-risk-with-context',
+    'https://app.orcho.ai/api/v1/generate-risk-with-context',
     headers={
         'Authorization': f'Bearer {API_KEY}',
         'Content-Type': 'application/json'

@@ -22,7 +22,7 @@ The Orcho Risk Generation API provides endpoints for assessing the risk of AI pr
 All API requests should be made to:
 
 ```
-https://api.orcho.ai
+https://app.orcho.ai
 ```
 
 ## Authentication
@@ -32,7 +32,7 @@ All API endpoints require authentication using Bearer tokens. Include your API k
 <CodeGroup>
 
 ```bash cURL
-curl -X POST 'https://api.orcho.ai/api/v1/generate-risk' \
+curl -X POST 'https://app.orcho.ai/api/v1/generate-risk' \
   -H 'Authorization: Bearer YOUR_API_KEY' \
   -H 'Content-Type: application/json'
 ```
@@ -127,7 +127,7 @@ Use the health check endpoint to verify API availability:
 <CodeGroup>
 
 ```bash cURL
-curl https://api.orcho.ai/health
+curl https://app.orcho.ai/health
 ```
 
 

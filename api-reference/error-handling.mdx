@@ -309,7 +309,7 @@ def create_session_with_retries():
 # Use the session
 session = create_session_with_retries()
 response = session.post(
-    'https://api.orcho.ai/api/v1/generate-risk',
+    'https://app.orcho.ai/api/v1/generate-risk',
     headers=headers,
     json=data
 )
