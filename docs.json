@@ -25,6 +25,48 @@
     },
     "tabs": [
       {
+<<<<<<< Updated upstream
+=======
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "pages": [
+              "index",
+              "quickstart",
+              "authentication"
+            ]
+          },
+          {
+            "group": "Core Concepts",
+            "pages": [
+              "concepts/risk-scoring",
+              "concepts/dependency-graphs",
+              "concepts/feature-weights"
+            ]
+          },
+          {
+            "group": "Integrations",
+            "pages": [
+              "integrations/cursor",
+              "integrations/jira",
+              "integrations/browser",
+              "integrations/github"
+            ]
+          },
+          {
+            "group": "Guides",
+            "pages": [
+              "guides/integration",
+              "guides/error-handling",
+              "guides/rate-limits",
+              "guides/best-practices"
+            ]
+          }
+        ]
+      },
+      {
+>>>>>>> Stashed changes
         "tab": "API Reference",
         "groups": [
           {
@@ -47,12 +89,6 @@
               "api-reference/error-handling"
             ]
           }
-        ]
-      },
-      {
-        "group": "Integrations",
-        "pages": [
-          "integrations/cursor"
         ]
       }
     ]

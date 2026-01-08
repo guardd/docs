@@ -1,0 +1,844 @@
+---
+title: "GitHub Integration"
+description: "Automatic dependency graph generation and risk assessment on every push with Orcho's GitHub App"
+icon: "github"
+---
+
+Orcho's GitHub App automatically builds and maintains dependency graphs for your repositories, updating them on every push. Get comprehensive blast radius analysis and risk assessment for code changes with full visibility into how changes propagate through your codebase.
+
+## Features
+
+<CardGroup cols={2}>
+
+<Card title="Automatic Dependency Graphs" icon="diagram-project">
+Built and updated on every push
+</Card>
+
+<Card title="Blast Radius Analysis" icon="circle-radiation">
+See exactly which files are impacted by changes
+</Card>
+
+<Card title="Pull Request Checks" icon="code-pull-request">
+Risk assessment runs on every PR
+</Card>
+
+<Card title="Change Visualization" icon="chart-network">
+Interactive graph showing dependency relationships
+</Card>
+
+</CardGroup>
+
+## How It Works
+
+<Steps>
+
+<Step title="Install Orcho GitHub App">
+Install the app and grant repository access
+</Step>
+
+<Step title="Initial graph generation">
+Orcho analyzes your codebase and builds a complete dependency graph:
+- Import statements
+- Function calls
+- Class inheritance
+- Module dependencies
+- Configuration files
+</Step>
+
+<Step title="Developer pushes code">
+Developer commits and pushes changes to GitHub
+</Step>
+
+<Step title="Webhook triggered">
+GitHub webhook notifies Orcho of the push event
+</Step>
+
+<Step title="Graph updated">
+Orcho analyzes the changed files and updates the dependency graph incrementally
+</Step>
+
+<Step title="Blast radius calculated">
+For each changed file, Orcho calculates:
+- Direct dependencies (files that import this file)
+- Indirect dependencies (files that depend on direct dependencies)
+- Total impact scope
+</Step>
+
+<Step title="Risk assessment">
+Combined with other risk factors to produce overall risk score
+</Step>
+
+</Steps>
+
+## Installation
+
+<Steps>
+
+<Step title="Install the GitHub App">
+Visit the [GitHub Marketplace](https://github.com/marketplace) and search for "Orcho Risk Assessment"
+
+Or install directly: [Install Orcho](https://github.com/apps/orcho-risk)
+
+<Check>
+Works with GitHub.com and GitHub Enterprise Server
+</Check>
+</Step>
+
+<Step title="Select repositories">
+Choose which repositories to enable:
+- All repositories (current and future)
+- Only select repositories
+
+<Warning>
+Orcho needs read access to code and write access to checks/statuses
+</Warning>
+</Step>
+
+<Step title="Contact for API key">
+Email [support@orcho.ai](mailto:support@orcho.ai) to request an API key for your organization
+</Step>
+
+<Step title="Configure the app">
+In GitHub, go to:
+1. Settings → Integrations → Orcho Risk Assessment
+2. Click "Configure"
+3. Enter your API key
+4. Configure risk thresholds
+5. Enable PR checks
+6. Save configuration
+</Step>
+
+<Step title="Initial graph generation">
+Orcho will automatically:
+1. Analyze all enabled repositories
+2. Generate dependency graphs (5-30 minutes depending on size)
+3. Send you a notification when complete
+</Step>
+
+</Steps>
+
+## Dependency Graph
+
+### What Gets Analyzed
+
+Orcho builds dependency graphs by analyzing:
+
+<Tabs>
+
+<Tab title="Python">
+**Imports:**
+```python
+import requests
+from datetime import datetime
+from .utils import helper_function
+```
+
+**Function calls:**
+```python
+def main():
+    result = helper_function()  # Dependency detected
+    return process_result(result)
+```
+
+**Class inheritance:**
+```python
+class CustomHandler(BaseHandler):  # Dependency on BaseHandler
+    pass
+```
+</Tab>
+
+<Tab title="JavaScript/TypeScript">
+**Imports:**
+```javascript
+import { useState } from 'react';
+import { apiCall } from './api';
+import utils from '../utils/helpers';
+```
+
+**Dynamic imports:**
+```javascript
+const module = await import('./dynamic-module');
+```
+
+**Requires:**
+```javascript
+const express = require('express');
+```
+</Tab>
+
+<Tab title="Java">
+**Imports:**
+```java
+import com.company.project.UserService;
+import java.util.List;
+```
+
+**Class dependencies:**
+```java
+public class UserController {
+    private UserService userService;  // Dependency
+}
+```
+</Tab>
+
+<Tab title="Go">
+**Imports:**
+```go
+import (
+    "fmt"
+    "github.com/company/project/utils"
+)
+```
+
+**Package dependencies:**
+Automatically detected from go.mod
+</Tab>
+
+</Tabs>
+
+### Graph Structure
+
+The dependency graph is stored as a directed acyclic graph (DAG):
+
+```json
+{
+  "repository": "company/api-server",
+  "last_updated": "2026-01-08T14:30:00Z",
+  "nodes": [
+    {
+      "file": "src/api/users.py",
+      "type": "module",
+      "imports": [
+        "src/database/models.py",
+        "src/auth/permissions.py"
+      ],
+      "imported_by": [
+        "src/api/admin.py",
+        "src/api/public.py"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "from": "src/api/users.py",
+      "to": "src/database/models.py",
+      "type": "import"
+    }
+  ],
+  "stats": {
+    "total_files": 347,
+    "total_dependencies": 1205,
+    "avg_dependencies_per_file": 3.47,
+    "max_dependency_chain": 12
+  }
+}
+```
+
+## Pull Request Checks
+
+### Automatic Risk Assessment
+
+When a PR is opened or updated, Orcho automatically:
+
+<Steps>
+
+<Step title="Detect changed files">
+Identifies all files modified in the PR
+</Step>
+
+<Step title="Calculate blast radius">
+Using the dependency graph, finds all files that depend on changed files:
+
+```
+Changed files:
+• src/auth/login.py
+
+Direct dependencies (4 files):
+• src/api/auth_endpoints.py
+• src/middleware/auth_middleware.py  
+• src/cli/login_command.py
+• tests/test_auth.py
+
+Indirect dependencies (12 files):
+• src/api/users.py
+• src/api/admin.py
+• ... (10 more)
+
+Total blast radius: 16 files
+```
+</Step>
+
+<Step title="Assess risk">
+Combines blast radius with other risk factors:
+- Data sensitivity in changed code
+- Clarity of PR description
+- Type of changes (additions vs deletions)
+</Step>
+
+<Step title="Post check result">
+Creates a GitHub Check with risk assessment:
+
+<ResponseExample>
+```
+✓ Orcho Risk Assessment — PASSED
+
+Risk Score: 0.42 (MEDIUM)
+
+Risk Factors:
+• Data Sensitivity: 0.35 (LOW)
+• Input Clarity: 0.48 (MEDIUM)  
+• Blast Radius: 0.45 (MEDIUM)
+
+Blast Radius Details:
+• Changed files: 2
+• Direct dependencies: 4
+• Indirect dependencies: 12
+• Total impacted files: 16
+
+Recommendations:
+• REVIEW_RECOMMENDED
+• Add tests for impacted files
+• Update documentation
+
+View detailed report →
+```
+</ResponseExample>
+</Step>
+
+</Steps>
+
+### Check Configuration
+
+Configure when checks run and what they do:
+
+<ParamField path="run_on_pr" type="boolean" default="true">
+Run risk assessment on pull requests
+
+Default: `true`
+</ParamField>
+
+<ParamField path="run_on_push" type="boolean" default="false">
+Run risk assessment on direct pushes to protected branches
+
+Default: `false`
+</ParamField>
+
+<ParamField path="block_high_risk" type="boolean" default="false">
+Block merging of high-risk PRs (&ge; 0.6)
+
+Default: `false`
+</ParamField>
+
+<ParamField path="require_approval_threshold" type="number" default="0.7">
+Risk score that requires additional approval
+
+Default: `0.7`
+</ParamField>
+
+<ParamField path="comment_on_pr" type="boolean" default="true">
+Post a comment with risk details
+
+Default: `true`
+</ParamField>
+
+### Status Checks
+
+Orcho creates GitHub Status Checks that can be required for merging:
+
+**Low Risk (&lt; 0.4):**
+```
+✓ orcho/risk-assessment — Low risk detected
+```
+
+**Medium Risk (0.4-0.59):**
+```
+✓ orcho/risk-assessment — Medium risk, review recommended
+```
+
+**High Risk (0.6-0.79):**
+```
+⚠ orcho/risk-assessment — High risk, approval required
+```
+
+**Critical Risk (&ge; 0.8):**
+```
+✗ orcho/risk-assessment — Critical risk, changes required
+```
+
+## Blast Radius Visualization
+
+### Interactive Graph
+
+View the dependency graph visually:
+
+1. Go to PR page
+2. Click "View Details" on Orcho check
+3. See interactive graph showing:
+   - Changed files (highlighted in red)
+   - Direct dependencies (orange)
+   - Indirect dependencies (yellow)
+   - Unaffected files (gray)
+
+<Frame>
+```
+             [users.py]*
+                 ↑
+                 |
+         [auth_endpoints.py]◆
+                 ↑
+                 |
+    +------------+------------+
+    ↑            ↑            ↑
+[admin.py]  [public.py]  [cli.py]
+
+
+* Changed file
+◆ Direct dependency
+  Other files
+```
+</Frame>
+
+### Impact Report
+
+Get a detailed report of impact:
+
+```markdown
+## Blast Radius Report
+
+### Changed Files (2)
+- src/auth/login.py (47 lines modified)
+- src/auth/permissions.py (12 lines modified)
+
+### Direct Dependencies (4 files)
+Files that directly import changed files:
+- src/api/auth_endpoints.py
+- src/middleware/auth_middleware.py
+- src/cli/login_command.py
+- tests/test_auth.py
+
+### Indirect Dependencies (12 files)
+Files that depend on direct dependencies:
+- src/api/users.py (via auth_endpoints.py)
+- src/api/admin.py (via auth_endpoints.py)
+- src/api/public.py (via auth_endpoints.py)
+... (9 more)
+
+### Recommendations
+- Add tests for auth_endpoints.py
+- Update API documentation
+- Review admin.py integration
+- Check CLI command compatibility
+
+### Risk Score: 0.45 (MEDIUM)
+```
+
+## Branch Protection Rules
+
+### Require Orcho Checks
+
+Make Orcho risk assessment required before merging:
+
+<Steps>
+
+<Step title="Go to branch settings">
+1. Repository → Settings → Branches
+2. Find your protected branch (e.g., `main`)
+3. Click "Edit" on branch protection rule
+</Step>
+
+<Step title="Require status checks">
+1. Check "Require status checks to pass before merging"
+2. Search for "orcho/risk-assessment"
+3. Add the check
+4. Save changes
+</Step>
+
+<Step title="Configure thresholds">
+In Orcho settings, set what constitutes a passing check:
+
+```json
+{
+  "pass_threshold": 0.6,  // PRs with score < 0.6 pass
+  "fail_threshold": 0.8,  // PRs with score >= 0.8 fail
+  "warn_threshold": 0.6   // PRs with 0.6-0.79 warn but allow
+}
+```
+</Step>
+
+</Steps>
+
+### Custom Rules
+
+Create custom rules based on blast radius:
+
+**Block if too many files affected:**
+```json
+{
+  "rule": "max_blast_radius",
+  "max_affected_files": 50,
+  "action": "block"
+}
+```
+
+**Require review if critical files affected:**
+```json
+{
+  "rule": "critical_files",
+  "files": [
+    "src/auth/**",
+    "src/database/migrations/**",
+    "config/production.yml"
+  ],
+  "action": "require_review"
+}
+```
+
+**Warning for large dependency chains:**
+```json
+{
+  "rule": "dependency_depth",
+  "max_depth": 8,
+  "action": "warn"
+}
+```
+
+## Graph Updates
+
+### Incremental Updates
+
+Orcho updates the dependency graph incrementally on each push:
+
+<Steps>
+
+<Step title="Detect changed files">
+From git diff: `src/utils/helpers.py` modified
+</Step>
+
+<Step title="Analyze changes">
+```python
+# Added new import
+import logging  # New dependency
+
+# Removed old import  
+# from datetime import datetime  # Dependency removed
+```
+</Step>
+
+<Step title="Update graph">
+- Add edge: `helpers.py → logging`
+- Remove edge: `helpers.py → datetime`
+- Update: Files that import `helpers.py` now transitively depend on `logging`
+</Step>
+
+<Step title="Recalculate metrics">
+Update stats:
+- Total dependencies: 1206 → 1206 (added 1, removed 1)
+- Files depending on helpers.py: unchanged
+</Step>
+
+</Steps>
+
+### Full Rebuild
+
+Trigger a full graph rebuild:
+
+1. Go to repository settings
+2. Orcho → Advanced
+3. Click "Rebuild Dependency Graph"
+4. Wait 5-30 minutes (depending on repo size)
+
+**When to rebuild:**
+- After major refactoring
+- If graph seems out of sync
+- After changing large number of files
+- Monthly for active repos (recommended)
+
+## Webhooks & Events
+
+### Supported Events
+
+Orcho listens for these GitHub events:
+
+<Tabs>
+
+<Tab title="Push Events">
+**Triggers:**
+- Code pushed to any branch
+- Commits added to PR
+
+**Actions:**
+- Update dependency graph
+- Recalculate blast radius
+- Update risk scores
+</Tab>
+
+<Tab title="Pull Request Events">
+**Triggers:**
+- PR opened
+- PR synchronized (new commits)
+- PR reopened
+
+**Actions:**
+- Run risk assessment
+- Post check result
+- Comment with details
+- Update status
+</Tab>
+
+<Tab title="Branch Protection">
+**Triggers:**
+- PR ready for review
+- PR approved
+
+**Actions:**
+- Validate risk checks passed
+- Allow/block merge
+</Tab>
+
+</Tabs>
+
+### Webhook Configuration
+
+View webhook deliveries and re-deliver failed ones:
+
+1. Repository Settings → Webhooks
+2. Find "Orcho Risk Assessment"
+3. Click to view recent deliveries
+4. Re-deliver if needed
+
+## API Access
+
+### GraphQL API
+
+Query your dependency graph via API:
+
+```graphql
+query GetDependencyGraph($repo: String!) {
+  repository(fullName: $repo) {
+    dependencyGraph {
+      nodes {
+        file
+        imports
+        importedBy
+      }
+      stats {
+        totalFiles
+        totalDependencies
+      }
+    }
+  }
+}
+```
+
+### REST API
+
+Get blast radius for specific files:
+
+```bash
+curl -X POST https://api.orcho.ai/api/v1/blast-radius \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "repo_full_name": "company/api-server",
+    "files": ["src/auth/login.py"]
+  }'
+```
+
+**Response:**
+```json
+{
+  "changed_files": ["src/auth/login.py"],
+  "direct_dependencies": 4,
+  "indirect_dependencies": 12,
+  "total_impact": 16,
+  "affected_files": [
+    "src/api/auth_endpoints.py",
+    "src/middleware/auth_middleware.py",
+    "..."
+  ]
+}
+```
+
+## Performance
+
+### Graph Generation Times
+
+Typical times for initial graph generation:
+
+| Repository Size | Files | Time |
+|----------------|-------|------|
+| Small | &lt; 100 | 1-2 min |
+| Medium | 100-1,000 | 5-10 min |
+| Large | 1,000-10,000 | 15-30 min |
+| Very Large | 10,000+ | 30-60 min |
+
+### Update Times
+
+Incremental updates are much faster:
+
+| Changed Files | Update Time |
+|--------------|-------------|
+| 1-5 files | &lt; 5 seconds |
+| 5-20 files | 5-15 seconds |
+| 20-100 files | 15-60 seconds |
+| 100+ files | 1-5 minutes |
+
+## Troubleshooting
+
+<AccordionGroup>
+
+<Accordion title="Graph not generating">
+**Check app installation:**
+1. Settings → Integrations → Applications
+2. Verify "Orcho" is installed
+3. Check repository access is granted
+
+**Check webhook:**
+1. Settings → Webhooks
+2. Find Orcho webhook
+3. Check recent deliveries for errors
+
+**Trigger manually:**
+1. Make a small commit
+2. Push to repository
+3. Check Orcho dashboard for progress
+</Accordion>
+
+<Accordion title="PR checks not running">
+**Verify checks are enabled:**
+1. Orcho settings → PR Checks
+2. Ensure "Run on PR" is checked
+3. Save and retry
+
+**Check branch protection:**
+1. Branch protection rules may need update
+2. Add orcho/risk-assessment to required checks
+
+**Manual trigger:**
+Close and reopen the PR to trigger checks
+</Accordion>
+
+<Accordion title="Incorrect dependency graph">
+**Trigger full rebuild:**
+1. Orcho settings → Advanced
+2. Click "Rebuild Dependency Graph"
+3. Wait for completion
+
+**Check language support:**
+- Python: ✅ Full support
+- JavaScript/TypeScript: ✅ Full support
+- Java: ✅ Full support
+- Go: ✅ Full support
+- Others: ⚠️ Limited support
+
+**Report issues:**
+Contact [support@orcho.ai](mailto:support@orcho.ai) with repo details
+</Accordion>
+
+<Accordion title="Performance issues">
+**Large repository optimization:**
+1. Enable selective analysis (exclude test files)
+2. Increase graph update interval
+3. Use shallow analysis for large codebases
+
+**Check rate limits:**
+- GitHub API rate limits may affect updates
+- Contact support for higher limits
+</Accordion>
+
+</AccordionGroup>
+
+## Best Practices
+
+<Steps>
+
+<Step title="Start with smaller repos">
+Install on 1-2 smaller repositories first to validate before org-wide rollout
+</Step>
+
+<Step title="Set appropriate thresholds">
+Tune risk thresholds based on your team's tolerance:
+- Strict: Block at 0.5
+- Balanced: Block at 0.7
+- Permissive: Block at 0.8+
+</Step>
+
+<Step title="Review blast radius regularly">
+Use blast radius insights to:
+- Identify tightly coupled code
+- Plan refactoring efforts
+- Improve code architecture
+</Step>
+
+<Step title="Integrate with CI/CD">
+Use Orcho risk scores in your deployment pipeline:
+```yaml
+# .github/workflows/deploy.yml
+- name: Check Risk Score
+  run: |
+    if [ $ORCHO_RISK_SCORE -ge 0.7 ]; then
+      echo "Risk too high for auto-deploy"
+      exit 1
+    fi
+```
+</Step>
+
+<Step title="Keep graphs updated">
+Set up weekly full rebuilds for active repositories
+</Step>
+
+</Steps>
+
+## Support
+
+Need help with the GitHub integration?
+
+<CardGroup cols={2}>
+
+<Card title="Install App" icon="github" href="https://github.com/apps/orcho-risk">
+Install from GitHub Marketplace
+</Card>
+
+<Card title="Get API Key" icon="key" href="mailto:support@orcho.ai">
+Contact us for an API key
+</Card>
+
+<Card title="API Documentation" icon="book" href="/api-reference/introduction">
+Review the REST API docs
+</Card>
+
+<Card title="Email Support" icon="envelope" href="mailto:support@orcho.ai">
+Contact support team
+</Card>
+
+</CardGroup>
+
+## Next Steps
+
+<Steps>
+
+<Step title="Install the GitHub App">
+Install from GitHub Marketplace or direct link
+</Step>
+
+<Step title="Get your API key">
+Contact [support@orcho.ai](mailto:support@orcho.ai)
+</Step>
+
+<Step title="Configure repository access">
+Select repositories to enable
+</Step>
+
+<Step title="Wait for initial graph generation">
+5-30 minutes depending on repository size
+</Step>
+
+<Step title="Enable PR checks">
+Make risk assessment part of your PR workflow
+</Step>
+
+<Step title="Set up branch protection">
+Require Orcho checks before merging
+</Step>
+
+</Steps>

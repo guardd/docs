@@ -1,0 +1,576 @@
+---
+title: "Jira Integration"
+description: "Automatically assess risk for every Jira ticket creation with Orcho's Jira app"
+icon: "jira"
+---
+
+Orcho integrates directly with Jira to automatically assess the risk of every ticket as it's created. Get real-time risk scores and recommendations before work begins, helping teams prioritize security reviews and prevent high-risk implementations.
+
+## Features
+
+<CardGroup cols={2}>
+
+<Card title="Automatic Assessment" icon="wand-magic-sparkles">
+Risk assessment runs automatically on ticket creation
+</Card>
+
+<Card title="Smart Warnings" icon="triangle-exclamation">
+High-risk tickets are flagged immediately with clear warnings
+</Card>
+
+<Card title="Team Visibility" icon="users">
+Risk scores visible to entire team in ticket metadata
+</Card>
+
+<Card title="Workflow Integration" icon="diagram-project">
+Block or require approval for critical-risk tickets
+</Card>
+
+</CardGroup>
+
+## How It Works
+
+When a developer creates a Jira ticket, Orcho automatically:
+
+<Steps>
+
+<Step title="Ticket created">
+Developer creates a new Jira ticket with title and description
+</Step>
+
+<Step title="Orcho analyzes">
+The Orcho app intercepts the creation event and calls the `assess_risk` API with the ticket content
+</Step>
+
+<Step title="Risk assessment returned">
+Orcho evaluates the ticket for:
+- Data sensitivity
+- Input clarity
+- Potential blast radius
+- Security concerns
+</Step>
+
+<Step title="Risk displayed">
+Risk score and level are added as custom fields on the ticket:
+- **Risk Score:** 0.72
+- **Risk Level:** HIGH
+- **Recommendations:** Review required before implementation
+</Step>
+
+<Step title="Team notified">
+For high-risk tickets (&ge; 0.6), stakeholders are automatically notified
+</Step>
+
+</Steps>
+
+## Installation
+
+<Steps>
+
+<Step title="Install Orcho for Jira">
+Visit the [Atlassian Marketplace](https://marketplace.atlassian.com) and search for "Orcho Risk Assessment"
+
+<Check>
+Or have your Jira admin install from the Apps section
+</Check>
+</Step>
+
+<Step title="Contact for API key">
+Email [support@orcho.ai](mailto:support@orcho.ai) to request an API key for your organization
+</Step>
+
+<Step title="Configure the app">
+In Jira, go to:
+1. Settings → Apps → Manage Apps
+2. Find "Orcho Risk Assessment"
+3. Click "Configure"
+4. Enter your API key
+5. Save configuration
+</Step>
+
+<Step title="Enable for projects">
+Choose which Jira projects should have automatic risk assessment:
+1. Settings → Apps → Orcho Configuration
+2. Select projects to enable
+3. Configure risk thresholds (optional)
+4. Save changes
+</Step>
+
+<Step title="Test the integration">
+Create a test ticket with a high-risk description:
+
+```
+Title: Delete all production user data
+Description: Remove all users from the production database to clean up old accounts
+```
+
+Verify that the risk assessment appears on the ticket
+</Step>
+
+</Steps>
+
+## Risk Assessment Fields
+
+Orcho adds the following custom fields to your Jira tickets:
+
+<ParamField path="Orcho Risk Score" type="number">
+Overall risk score from 0.0 (minimal risk) to 1.0 (critical risk)
+
+Example: `0.72`
+</ParamField>
+
+<ParamField path="Orcho Risk Level" type="string">
+Risk level category: minimal, low, medium, high, or critical
+
+Example: `HIGH`
+</ParamField>
+
+<ParamField path="Orcho Risk Factors" type="object">
+Breakdown of individual risk factor scores
+
+Example:
+```
+Data Sensitivity: 0.85
+Input Clarity: 0.62
+Blast Radius: N/A (no context)
+```
+</ParamField>
+
+<ParamField path="Orcho Recommendations" type="array">
+Actionable recommendations for mitigating risk
+
+Example:
+- Add WHERE clause to limit scope
+- Require security team approval
+- Create backup before deletion
+</ParamField>
+
+<ParamField path="Orcho Assessment Date" type="datetime">
+Timestamp when risk assessment was performed
+
+Example: `2026-01-08T14:30:00Z`
+</ParamField>
+
+## Example Risk Assessment
+
+### High-Risk Ticket
+
+<ResponseExample>
+```
+JIRA-1234: Delete inactive user accounts
+
+Risk Assessment:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+⚠️  HIGH RISK (Score: 0.78)
+
+Risk Factors:
+• Data Sensitivity: 0.92 (CRITICAL)
+• Input Clarity: 0.68 (HIGH)
+• Blast Radius: 0.65 (HIGH)
+
+Recommendations:
+• REVIEW_REQUIRED - Significant risk factors present
+• Add specific criteria for "inactive" (e.g., no login > 90 days)
+• Implement soft delete instead of hard delete
+• Require manual approval from security team
+• Create full database backup before execution
+• Test on staging environment first
+
+⚠️  This ticket has been flagged for security review
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+</ResponseExample>
+
+### Low-Risk Ticket
+
+<ResponseExample>
+```
+JIRA-1235: Update button color on homepage
+
+Risk Assessment:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✓  LOW RISK (Score: 0.18)
+
+Risk Factors:
+• Data Sensitivity: 0.05 (MINIMAL)
+• Input Clarity: 0.25 (LOW)
+• Blast Radius: 0.15 (MINIMAL)
+
+Recommendations:
+• SAFE - Minimal risk detected
+• Proceed with standard development workflow
+
+✓  This ticket is safe to implement
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+</ResponseExample>
+
+## Workflow Automation
+
+### Automatic Approvals
+
+Configure Jira workflows to require approvals based on risk:
+
+<Tabs>
+
+<Tab title="High Risk (≥ 0.6)">
+**Require approval from:**
+- Security team lead
+- Engineering manager
+- Product owner
+
+**Workflow:**
+1. Ticket created → Risk assessed
+2. If risk &ge; 0.6 → Status changes to "Security Review"
+3. Security team notified automatically
+4. Requires approval before moving to "In Progress"
+</Tab>
+
+<Tab title="Critical Risk (≥ 0.8)">
+**Require approval from:**
+- CISO or Security Director
+- CTO or VP Engineering
+- Legal (for data deletion/modification)
+
+**Workflow:**
+1. Ticket created → Risk assessed
+2. If risk &ge; 0.8 → Status changes to "Blocked - Critical Risk"
+3. Executive team notified via Slack/email
+4. Requires written justification and multiple approvals
+5. Must be reviewed in security committee meeting
+</Tab>
+
+<Tab title="Low Risk (< 0.4)">
+**Auto-approve:**
+- No additional approval needed
+- Standard development workflow
+- Automatically moves to "Ready for Development"
+
+**Workflow:**
+1. Ticket created → Risk assessed
+2. If risk &lt; 0.4 → Status changes to "Ready for Development"
+3. Team can begin work immediately
+</Tab>
+
+</Tabs>
+
+## Configuration Options
+
+### Risk Thresholds
+
+Customize thresholds for your organization:
+
+<ParamField path="warning_threshold" type="number" default="0.6">
+Risk score that triggers warnings and notifications
+
+Default: `0.6` (high risk)
+</ParamField>
+
+<ParamField path="blocking_threshold" type="number" default="0.8">
+Risk score that blocks ticket from moving to development
+
+Default: `0.8` (critical risk)
+</ParamField>
+
+<ParamField path="auto_approve_threshold" type="number" default="0.4">
+Risk score below which tickets are auto-approved
+
+Default: `0.4` (medium risk)
+</ParamField>
+
+### Notification Settings
+
+<ParamField path="notify_high_risk" type="boolean" default="true">
+Send notifications for high-risk tickets (&ge; 0.6)
+</ParamField>
+
+<ParamField path="notify_critical_risk" type="boolean" default="true">
+Send notifications for critical-risk tickets (&ge; 0.8)
+</ParamField>
+
+<ParamField path="notification_channels" type="array">
+Where to send notifications: email, slack, jira-comment
+
+Default: `["email", "jira-comment"]`
+</ParamField>
+
+<ParamField path="notification_recipients" type="object">
+Who receives notifications for each risk level
+
+Example:
+```json
+{
+  "high_risk": ["security-team@company.com"],
+  "critical_risk": ["ciso@company.com", "cto@company.com"]
+}
+```
+</ParamField>
+
+## JQL Queries
+
+Use Jira Query Language to find tickets by risk level:
+
+### Find High-Risk Tickets
+
+```jql
+"Orcho Risk Level" = "HIGH" OR "Orcho Risk Level" = "CRITICAL"
+```
+
+### Find Tickets Needing Review
+
+```jql
+"Orcho Risk Score" >= 0.6 AND status = "Security Review"
+```
+
+### Find Safe-to-Implement Tickets
+
+```jql
+"Orcho Risk Level" IN ("MINIMAL", "LOW") AND status = "Ready for Development"
+```
+
+### Find Tickets by Risk Factor
+
+```jql
+"Orcho Risk Factors" ~ "Data Sensitivity: 0.9*"
+```
+
+## Dashboards & Reports
+
+### Risk Distribution Dashboard
+
+Create a dashboard showing:
+- Total tickets by risk level (pie chart)
+- Risk score distribution (histogram)
+- Average risk score trend over time (line chart)
+- High-risk tickets by assignee (bar chart)
+
+### Security Review Board
+
+Track tickets requiring security review:
+- Pending security reviews
+- Average time in security review
+- Approval vs rejection rate
+- Most common high-risk patterns
+
+## Troubleshooting
+
+<AccordionGroup>
+
+<Accordion title="Risk assessment not appearing">
+**Check app installation:**
+1. Go to Settings → Apps → Manage Apps
+2. Verify "Orcho Risk Assessment" is installed
+3. Check that app is enabled
+
+**Verify API key:**
+1. Settings → Apps → Orcho Configuration
+2. Ensure API key is entered correctly
+3. Test connection with "Test API Key" button
+
+**Check project settings:**
+1. Verify risk assessment is enabled for this project
+2. Check that user has permission to view custom fields
+</Accordion>
+
+<Accordion title="API key errors">
+**Invalid API Key:**
+- Contact [support@orcho.ai](mailto:support@orcho.ai) to verify key
+- Check for extra spaces or special characters
+- Try regenerating the key
+
+**Rate Limits:**
+- Contact [support@orcho.ai](mailto:support@orcho.ai) to check quota
+- Upgrade plan if needed for higher volume
+
+**Connection Errors:**
+- Verify Jira can reach api.orcho.ai
+- Check firewall/proxy settings
+- Contact IT to whitelist Orcho API
+</Accordion>
+
+<Accordion title="Incorrect risk scores">
+**Update ticket for reassessment:**
+1. Edit ticket title or description
+2. Save changes
+3. Risk will be reassessed automatically
+
+**Manual reassessment:**
+1. Click "More" (•••) on ticket
+2. Select "Reassess Risk" from Orcho menu
+3. New assessment will replace old one
+
+**Adjust risk thresholds:**
+1. Settings → Apps → Orcho Configuration
+2. Customize thresholds for your needs
+3. Save and test with sample tickets
+</Accordion>
+
+<Accordion title="Notifications not working">
+**Check notification settings:**
+1. Settings → Apps → Orcho Configuration
+2. Verify notification channels are enabled
+3. Check recipient email addresses
+
+**Test notifications:**
+1. Create a test high-risk ticket
+2. Check spam folders
+3. Verify Slack webhook is configured correctly
+
+**Permission issues:**
+- Ensure recipients have access to project
+- Check Jira notification scheme settings
+</Accordion>
+
+</AccordionGroup>
+
+## Best Practices
+
+<Steps>
+
+<Step title="Start with monitoring mode">
+Enable for 1-2 projects initially to tune thresholds before org-wide rollout
+</Step>
+
+<Step title="Train your team">
+Educate developers on:
+- How risk assessment works
+- What different risk levels mean
+- How to write safer ticket descriptions
+</Step>
+
+<Step title="Review blocked tickets">
+Hold weekly reviews of blocked tickets to:
+- Understand common high-risk patterns
+- Adjust thresholds if needed
+- Improve ticket writing practices
+</Step>
+
+<Step title="Integrate with existing workflows">
+Don't create parallel workflows - integrate risk assessment into existing approval processes
+</Step>
+
+<Step title="Monitor and iterate">
+Track metrics:
+- False positive rate (safe tickets marked high-risk)
+- False negative rate (risky tickets marked low-risk)
+- Time spent in security review
+- Developer feedback
+</Step>
+
+</Steps>
+
+## Advanced Features
+
+### Custom Risk Weights
+
+Adjust risk factor weights based on your organization's priorities:
+
+```json
+{
+  "data_sensitivity": 0.40,
+  "input_clarity": 0.30,
+  "blast_radius": 0.20,
+  "legal_ip_risk": 0.10
+}
+```
+
+Configure in: Settings → Apps → Orcho Configuration → Risk Weights
+
+### Jira Automation Rules
+
+Create automation rules triggered by risk assessment:
+
+**Example: Auto-assign high-risk tickets**
+```
+Trigger: Issue Created
+Condition: Orcho Risk Level = "HIGH" OR "CRITICAL"
+Action: Assign to Security Team
+```
+
+**Example: Add label for tracking**
+```
+Trigger: Issue Created
+Condition: Orcho Risk Score >= 0.6
+Action: Add label "security-review-required"
+```
+
+**Example: Update priority**
+```
+Trigger: Issue Created  
+Condition: Orcho Risk Level = "CRITICAL"
+Action: Set Priority = Highest
+```
+
+## Integration with Other Tools
+
+### Slack Notifications
+
+Connect Orcho risk assessments to Slack:
+
+1. Install Jira for Slack
+2. Configure webhook in Orcho settings
+3. Get notifications in #security-alerts channel
+4. Include risk score and direct link to ticket
+
+### Confluence Documentation
+
+Automatically create security review docs:
+
+1. High-risk ticket created
+2. Orcho creates Confluence page with risk details
+3. Security team adds review notes
+4. Link back to Jira ticket
+
+## Support
+
+Need help with the Jira integration?
+
+<CardGroup cols={2}>
+
+<Card title="Install App" icon="download" href="https://marketplace.atlassian.com">
+Find us on Atlassian Marketplace
+</Card>
+
+<Card title="Get API Key" icon="key" href="mailto:support@orcho.ai">
+Contact us for an API key
+</Card>
+
+<Card title="API Documentation" icon="book" href="/api-reference/introduction">
+Review the REST API docs
+</Card>
+
+<Card title="Email Support" icon="envelope" href="mailto:support@orcho.ai">
+Contact support team
+</Card>
+
+</CardGroup>
+
+## Next Steps
+
+<Steps>
+
+<Step title="Install the Jira app">
+Search for "Orcho" in Atlassian Marketplace
+</Step>
+
+<Step title="Get your API key">
+Contact [support@orcho.ai](mailto:support@orcho.ai)
+</Step>
+
+<Step title="Configure risk thresholds">
+Set thresholds that match your security policy
+</Step>
+
+<Step title="Enable for pilot project">
+Start with one project to tune settings
+</Step>
+
+<Step title="Train your team">
+Help developers understand risk assessment
+</Step>
+
+<Step title="Roll out organization-wide">
+Expand to all projects once validated
+</Step>
+
+</Steps>

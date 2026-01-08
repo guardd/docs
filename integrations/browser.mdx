@@ -1,0 +1,675 @@
+---
+title: "Browser Extension"
+description: "Real-time risk assessment for Gemini, Claude, and ChatGPT with Orcho's Chrome Extension"
+icon: "chrome"
+---
+
+Orcho's Chrome Extension provides real-time risk assessment for AI prompts across Google Gemini, Claude (web), and ChatGPT. Get instant risk scores and warnings before submitting potentially dangerous prompts, protecting your organization from data leaks and risky operations.
+
+## Features
+
+<CardGroup cols={2}>
+
+<Card title="Multi-Platform Support" icon="globe">
+Works with Gemini, Claude, and ChatGPT
+</Card>
+
+<Card title="Real-Time Analysis" icon="bolt">
+Risk assessment happens as you type
+</Card>
+
+<Card title="Smart Warnings" icon="shield-halved">
+Visual alerts for high-risk prompts before submission
+</Card>
+
+<Card title="Click-to-Block" icon="hand">
+One-click blocking of critical-risk prompts
+</Card>
+
+</CardGroup>
+
+## Supported Platforms
+
+<Tabs>
+
+<Tab title="Google Gemini">
+**Supported:**
+- ✅ gemini.google.com
+- ✅ Gemini Advanced
+- ✅ Gemini Pro
+- ✅ All conversation modes
+
+**Features:**
+- Real-time risk scoring as you type
+- Warning banner for high-risk prompts
+- Prompt blocking for critical risks
+- Risk history tracking
+</Tab>
+
+<Tab title="Claude (Web)">
+**Supported:**
+- ✅ claude.ai
+- ✅ Claude Sonnet
+- ✅ Claude Opus
+- ✅ Claude Projects
+
+**Features:**
+- Inline risk indicators
+- Pre-submission warnings
+- Context-aware analysis (with Projects)
+- Artifact risk assessment
+</Tab>
+
+<Tab title="ChatGPT">
+**Supported:**
+- ✅ chat.openai.com
+- ✅ ChatGPT Plus
+- ✅ ChatGPT Team
+- ✅ GPT-4 models
+
+**Features:**
+- Real-time risk display
+- Warning modals for high-risk
+- Automatic prompt sanitization suggestions
+- Conversation-level risk tracking
+</Tab>
+
+</Tabs>
+
+## Installation
+
+<Steps>
+
+<Step title="Install from Chrome Web Store">
+Visit the [Chrome Web Store](https://chrome.google.com/webstore) and search for "Orcho Risk Assessment"
+
+Or click: [Install Orcho Extension](https://chrome.google.com/webstore/detail/orcho)
+
+<Check>
+Works on any Chromium-based browser: Chrome, Edge, Brave, Arc
+</Check>
+</Step>
+
+<Step title="Pin the extension">
+Click the puzzle icon in your browser toolbar and pin Orcho for easy access
+</Step>
+
+<Step title="Contact for API key">
+Email [support@orcho.ai](mailto:support@orcho.ai) to request an API key for your organization
+</Step>
+
+<Step title="Configure the extension">
+Click the Orcho icon and enter your API key:
+
+<Tabs>
+
+<Tab title="Step-by-step">
+1. Click Orcho extension icon
+2. Click "Settings"
+3. Paste your API key
+4. Click "Save"
+5. Refresh AI platform tabs
+</Tab>
+
+<Tab title="First-time setup">
+On first install, you'll see:
+```
+Welcome to Orcho!
+
+To get started, you'll need an API key.
+
+Contact support@orcho.ai to request one.
+
+[ Enter API Key ]  [ Save ]
+```
+</Tab>
+
+</Tabs>
+</Step>
+
+<Step title="Test the extension">
+Go to claude.ai, gemini.google.com, or chat.openai.com and type a high-risk prompt:
+
+```
+Delete all records from the production database
+```
+
+You should see a risk indicator appear
+</Step>
+
+</Steps>
+
+## How It Works
+
+<Steps>
+
+<Step title="You start typing">
+Begin writing a prompt in Gemini, Claude, or ChatGPT
+</Step>
+
+<Step title="Real-time analysis">
+Orcho analyzes your prompt as you type (with a 500ms debounce to avoid excessive API calls)
+</Step>
+
+<Step title="Risk score displayed">
+A risk indicator appears showing:
+- Risk score (0.0-1.0)
+- Risk level (minimal, low, medium, high, critical)
+- Color-coded badge (green → red)
+</Step>
+
+<Step title="Warnings for high risk">
+If risk &ge; 0.6 (high), a warning banner appears:
+
+```
+⚠️  HIGH RISK DETECTED (Score: 0.78)
+
+This prompt may:
+• Expose sensitive data
+• Cause irreversible changes
+• Violate security policies
+
+Suggestions:
+• Remove specific identifiers
+• Add safety constraints
+• Review with security team
+
+[ Modify Prompt ]  [ Proceed Anyway ]
+```
+</Step>
+
+<Step title="Blocking for critical risk">
+If risk &ge; 0.8 (critical), prompt submission is blocked:
+
+```
+🛑 CRITICAL RISK - SUBMISSION BLOCKED
+
+This prompt has been blocked due to critical risk factors:
+• Data Sensitivity: 0.95 (CRITICAL)
+• Potential for irreversible damage
+
+You cannot submit this prompt. Please:
+• Rephrase to remove sensitive data
+• Contact security team for approval
+• Use a different approach
+
+[ Edit Prompt ]  [ Contact Security ]
+```
+</Step>
+
+</Steps>
+
+## Visual Indicators
+
+### Risk Badges
+
+The extension shows risk level with color-coded badges:
+
+<ResponseExample>
+```
+┌─────────────────────────────────────────┐
+│ Your prompt here...                     │
+│                                         │
+│                    [✓ MINIMAL] 0.12    │ ← Green badge
+└─────────────────────────────────────────┘
+
+┌─────────────────────────────────────────┐
+│ Drop the users table                    │
+│                                         │
+│                    [⚠️ CRITICAL] 0.92   │ ← Red badge
+└─────────────────────────────────────────┘
+```
+</ResponseExample>
+
+### Risk Level Colors
+
+| Risk Level | Score Range | Badge Color | Behavior |
+|-----------|-------------|-------------|----------|
+| Minimal | &lt; 0.2 | 🟢 Green | Allow |
+| Low | 0.2 - 0.39 | 🟡 Yellow | Allow |
+| Medium | 0.4 - 0.59 | 🟠 Orange | Warn |
+| High | 0.6 - 0.79 | 🔴 Red | Strong warning |
+| Critical | &ge; 0.8 | ⛔ Dark Red | Block |
+
+## Configuration Options
+
+### Risk Thresholds
+
+Customize when warnings and blocks occur:
+
+<ParamField path="warning_threshold" type="number" default="0.6">
+Risk score that triggers warning banners
+
+Default: `0.6` (high risk)
+</ParamField>
+
+<ParamField path="blocking_threshold" type="number" default="0.8">
+Risk score that blocks prompt submission
+
+Default: `0.8` (critical risk)
+</ParamField>
+
+<ParamField path="show_suggestions" type="boolean" default="true">
+Show suggestions for safer alternatives
+
+Default: `true`
+</ParamField>
+
+### Notification Settings
+
+<ParamField path="desktop_notifications" type="boolean" default="false">
+Show desktop notifications for high-risk prompts
+
+Default: `false`
+</ParamField>
+
+<ParamField path="sound_alerts" type="boolean" default="false">
+Play sound for critical-risk prompts
+
+Default: `false`
+</ParamField>
+
+<ParamField path="log_prompts" type="boolean" default="true">
+Log all assessed prompts for audit purposes
+
+Default: `true`
+</ParamField>
+
+### Platform Settings
+
+<ParamField path="enabled_platforms" type="array" default='["gemini", "claude", "chatgpt"]'>
+Which AI platforms to monitor
+
+Options: `"gemini"`, `"claude"`, `"chatgpt"`
+</ParamField>
+
+<ParamField path="auto_block" type="boolean" default="true">
+Automatically block critical-risk prompts
+
+Default: `true`
+</ParamField>
+
+<ParamField path="require_justification" type="boolean" default="false">
+Require written justification for high-risk prompts
+
+Default: `false`
+</ParamField>
+
+## Example Scenarios
+
+### Scenario 1: Database Deletion
+
+<Steps>
+
+<Step title="User types prompt">
+```
+Delete all user accounts that haven't logged in this year
+```
+</Step>
+
+<Step title="Risk assessment">
+```
+⚠️  HIGH RISK (Score: 0.74)
+
+Risk Factors:
+• Data Sensitivity: 0.88
+• Input Clarity: 0.65
+• Blast Radius: 0.68
+```
+</Step>
+
+<Step title="Warning displayed">
+```
+This prompt may cause irreversible data loss.
+
+Suggestions:
+• Use SELECT first to preview affected records
+• Export data before deletion
+• Use soft delete (mark as inactive) instead
+• Add WHERE clause with specific date
+• Require manual confirmation
+
+[ Modify Prompt ]  [ Proceed with Caution ]
+```
+</Step>
+
+</Steps>
+
+### Scenario 2: Sensitive Data Exposure
+
+<Steps>
+
+<Step title="User types prompt">
+```
+Analyze this customer data: 
+Name: John Doe
+SSN: 123-45-6789
+Credit Card: 4532-1234-5678-9012
+```
+</Step>
+
+<Step title="Risk assessment">
+```
+🛑 CRITICAL RISK (Score: 0.98)
+
+Risk Factors:
+• Data Sensitivity: 0.99 (PII detected)
+• Input Clarity: 0.95
+```
+</Step>
+
+<Step title="Submission blocked">
+```
+SUBMISSION BLOCKED
+
+This prompt contains:
+• Social Security Number
+• Credit card information
+• Personally Identifiable Information (PII)
+
+This violates data security policies.
+
+How to proceed:
+• Remove sensitive data
+• Use anonymized test data
+• Mask sensitive fields (XXX-XX-6789)
+• Contact compliance team
+
+[ Edit Prompt ]  [ Request Compliance Override ]
+```
+</Step>
+
+</Steps>
+
+### Scenario 3: Safe Code Request
+
+<Steps>
+
+<Step title="User types prompt">
+```
+Write a function to calculate the Fibonacci sequence in Python
+```
+</Step>
+
+<Step title="Risk assessment">
+```
+✓ MINIMAL RISK (Score: 0.08)
+
+This prompt is safe to proceed.
+```
+</Step>
+
+<Step title="No warning">
+Green badge displayed, user can submit immediately without warnings
+</Step>
+
+</Steps>
+
+## Audit & Compliance
+
+### Prompt Logging
+
+All assessed prompts are logged (if enabled) with:
+
+```json
+{
+  "timestamp": "2026-01-08T14:30:00Z",
+  "platform": "claude",
+  "user_email": "john.doe@company.com",
+  "prompt": "Delete old records...",
+  "risk_score": 0.74,
+  "risk_level": "high",
+  "action_taken": "warned",
+  "user_proceeded": false
+}
+```
+
+### Export Reports
+
+Export risk assessment reports:
+
+1. Click Orcho extension icon
+2. Click "Reports"
+3. Select date range
+4. Click "Export CSV" or "Export JSON"
+
+**Report includes:**
+- All assessed prompts
+- Risk scores and levels
+- User actions (modified, proceeded, blocked)
+- Timestamps and platforms
+
+### Compliance Dashboard
+
+View organization-wide metrics:
+
+- Total prompts assessed
+- High-risk attempts
+- Blocked prompts
+- Most common risk factors
+- Users with most high-risk prompts
+
+Access at: [app.orcho.ai/compliance](https://app.orcho.ai/compliance)
+
+## Privacy & Security
+
+<Warning>
+**Your prompts are processed securely:**
+</Warning>
+
+<Steps>
+
+<Step title="TLS encryption">
+All API calls use TLS 1.3 encryption
+</Step>
+
+<Step title="No storage">
+Prompts are analyzed in real-time and not stored on Orcho servers (unless logging is enabled by admin)
+</Step>
+
+<Step title="Local processing option">
+Enterprise customers can run risk assessment locally (contact sales)
+</Step>
+
+<Step title="Zero-knowledge architecture">
+Orcho cannot read your API keys - they're stored encrypted in browser storage
+</Step>
+
+</Steps>
+
+### What Data is Sent
+
+When you type a prompt, only the following is sent to Orcho:
+
+```json
+{
+  "prompt": "Your prompt text",
+  "platform": "claude",
+  "user_id": "hashed_user_id"
+}
+```
+
+**Not sent:**
+- ❌ Your API keys for AI platforms
+- ❌ Previous conversation history
+- ❌ Personal information
+- ❌ Browser history
+
+## Troubleshooting
+
+<AccordionGroup>
+
+<Accordion title="Extension not showing risk scores">
+**Check extension is active:**
+1. Click puzzle icon → Check Orcho is enabled
+2. Refresh the AI platform page
+3. Check extension icon - should be colored (not gray)
+
+**Verify API key:**
+1. Click Orcho icon → Settings
+2. Check API key is entered correctly
+3. Click "Test Connection" to verify
+
+**Platform compatibility:**
+1. Ensure you're on supported domain
+2. Check extension permissions in chrome://extensions
+</Accordion>
+
+<Accordion title="API key errors">
+**Invalid key:**
+- Contact [support@orcho.ai](mailto:support@orcho.ai)
+- Check for extra spaces
+- Try re-entering the key
+
+**Rate limits:**
+- Contact support to check quota
+- Reduce typing speed (extension debounces at 500ms)
+- Upgrade plan for higher limits
+</Accordion>
+
+<Accordion title="Risk scores seem incorrect">
+**False positives:**
+- Click "Report Incorrect" button on warning
+- Provide feedback to help us improve
+- Adjust thresholds in settings
+
+**False negatives:**
+- Report missed high-risk prompts
+- Contact support@orcho.ai with examples
+</Accordion>
+
+<Accordion title="Extension slowing down browser">
+**Optimize performance:**
+1. Settings → Enable "Lazy loading"
+2. Increase debounce time (500ms → 1000ms)
+3. Disable on less-critical platforms
+4. Clear extension cache
+
+**Check resource usage:**
+1. Chrome Task Manager (Shift+Esc)
+2. Find "Orcho Extension"
+3. Should use &lt; 50MB RAM
+</Accordion>
+
+</AccordionGroup>
+
+## Advanced Features
+
+### Custom Risk Rules
+
+Define organization-specific risk rules:
+
+```javascript
+// Block prompts containing internal code names
+{
+  "rule": "keyword_blacklist",
+  "keywords": ["ProjectTitan", "AlphaSystem"],
+  "action": "block",
+  "message": "Internal code names detected"
+}
+
+// Warn when requesting production data
+{
+  "rule": "environment_detection", 
+  "patterns": ["production", "prod db", "live server"],
+  "action": "warn"
+}
+```
+
+Configure at: [app.orcho.ai/rules](https://app.orcho.ai/rules)
+
+### Team Policies
+
+Set policies for your organization:
+
+<Tabs>
+
+<Tab title="Enforcement Level">
+**Soft Enforcement:**
+- Show warnings but allow override
+- Log overrides for review
+
+**Hard Enforcement:**
+- Block critical-risk prompts
+- No override option
+- Require security team approval
+</Tab>
+
+<Tab title="User Roles">
+**Standard Users:**
+- See warnings
+- Can be blocked
+
+**Power Users:**
+- See warnings
+- Cannot be blocked
+- All prompts logged
+
+**Admins:**
+- Configure settings
+- View all org prompts
+- Override blocks
+</Tab>
+
+</Tabs>
+
+## Browser Compatibility
+
+| Browser | Version | Status |
+|---------|---------|--------|
+| Chrome | 90+ | ✅ Fully supported |
+| Edge | 90+ | ✅ Fully supported |
+| Brave | 1.30+ | ✅ Fully supported |
+| Arc | All | ✅ Fully supported |
+| Firefox | - | ⚠️ Coming soon |
+| Safari | - | ⚠️ Coming soon |
+
+## Support
+
+Need help with the browser extension?
+
+<CardGroup cols={2}>
+
+<Card title="Install Extension" icon="chrome" href="https://chrome.google.com/webstore/detail/orcho">
+Download from Chrome Web Store
+</Card>
+
+<Card title="Get API Key" icon="key" href="mailto:support@orcho.ai">
+Contact us for an API key
+</Card>
+
+<Card title="Report Issue" icon="bug" href="mailto:support@orcho.ai">
+Report bugs or issues
+</Card>
+
+<Card title="Request Feature" icon="lightbulb" href="mailto:support@orcho.ai">
+Suggest new features
+</Card>
+
+</CardGroup>
+
+## Next Steps
+
+<Steps>
+
+<Step title="Install the extension">
+Download from Chrome Web Store
+</Step>
+
+<Step title="Get your API key">
+Contact [support@orcho.ai](mailto:support@orcho.ai)
+</Step>
+
+<Step title="Configure settings">
+Set thresholds and enable platforms
+</Step>
+
+<Step title="Test with sample prompts">
+Try high-risk and low-risk examples
+</Step>
+
+<Step title="Roll out to team">
+Share installation guide with colleagues
+</Step>
+
+</Steps>
