@@ -1,0 +1,448 @@
+---
+title: "Quickstart"
+description: "Get started with the Orcho Risk Generation API in under 5 minutes"
+icon: "rocket"
+---
+
+Get up and running with the Orcho Risk Generation API quickly. This guide will walk you through authentication, your first API call, and interpreting results.
+
+## Prerequisites
+
+Before you begin, make sure you have:
+
+- An Orcho API account
+- Your API key (available in your dashboard)
+- Basic knowledge of REST APIs
+
+<Note>
+Don't have an API key yet? Sign up at [orcho.ai](https://orcho.ai) to get started.
+</Note>
+
+## Step 1: Get Your API Key
+
+<Steps>
+<Step title="Sign in to your dashboard">
+Navigate to [dashboard.orcho.ai](https://dashboard.orcho.ai) and sign in with your credentials.
+</Step>
+
+<Step title="Generate API key">
+Go to Settings → API Keys and click "Create New Key". Store this key securely.
+
+<Warning>
+Your API key provides access to your account. Never share it publicly or commit it to version control.
+</Warning>
+</Step>
+
+<Step title="Test your key">
+Verify your key works by calling the health check endpoint:
+
+```bash
+curl https://api.orcho.ai/health \
+  -H 'Authorization: Bearer YOUR_API_KEY'
+```
+
+<Check>
+You should receive a response with `"status": "healthy"`
+</Check>
+</Step>
+</Steps>
+
+## Step 2: Make Your First Request
+
+Let's assess a simple prompt to see the API in action.
+
+<CodeGroup>
+```bash cURL
+curl -X POST 'https://api.orcho.ai/api/v1/generate-risk' \
+  -H 'Authorization: Bearer YOUR_API_KEY' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "prompt": "Delete all records from the users table"
+  }'
+```
+
+```python Python
+import requests
+import os
+
+API_KEY = os.environ.get('ORCHO_API_KEY')
+
+response = requests.post(
+    'https://api.orcho.ai/api/v1/generate-risk',
+    headers={
+        'Authorization': f'Bearer {API_KEY}',
+        'Content-Type': 'application/json'
+    },
+    json={
+        'prompt': 'Delete all records from the users table'
+    }
+)
+
+result = response.json()
+print(f"Risk Score: {result['overall_score']}")
+print(f"Risk Level: {result['overall_risk_level']}")
+```
+
+```javascript JavaScript
+const API_KEY = process.env.ORCHO_API_KEY;
+
+const response = await fetch('https://api.orcho.ai/api/v1/generate-risk', {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${API_KEY}`,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    prompt: 'Delete all records from the users table'
+  })
+});
+
+const result = await response.json();
+console.log(`Risk Score: ${result.overall_score}`);
+console.log(`Risk Level: ${result.overall_risk_level}`);
+```
+</CodeGroup>
+
+You should see a high-risk response due to the dangerous nature of the prompt:
+
+```json
+{
+  "success": true,
+  "overall_score": 89.5,
+  "overall_risk_level": "critical",
+  "recommendations": [
+    "Add WHERE clause to limit scope",
+    "Require explicit confirmation",
+    "Implement soft delete instead",
+    "Create backup before deletion"
+  ]
+}
+```
+
+## Step 3: Understanding the Response
+
+The API returns several key fields:
+
+<AccordionGroup>
+<Accordion title="overall_score (0-100)">
+The aggregate risk score combining all risk factors. Higher scores indicate greater risk.
+
+- **0-25**: Low risk - safe to proceed
+- **26-50**: Medium risk - review recommended
+- **51-75**: High risk - human review required
+- **76-100**: Critical risk - manual intervention needed
+</Accordion>
+
+<Accordion title="overall_risk_level">
+A categorical risk level for quick decision making:
+- `"low"` - Safe to automate
+- `"medium"` - Proceed with caution
+- `"high"` - Requires review
+- `"critical"` - Requires manual approval
+</Accordion>
+
+<Accordion title="recommendations">
+An array of actionable steps to mitigate identified risks. Always review these before proceeding with high-risk tasks.
+</Accordion>
+
+<Accordion title="scores">
+Individual scores for each risk factor:
+- `data_sensitivity` - Presence of PII, credentials, or sensitive data
+- `input_clarity` - Completeness and clarity of the prompt
+- `blast_radius` - Impact scope (requires context endpoint)
+- `context_complexity` - Task complexity (requires context endpoint)
+- `legal_ip_risk` - Legal and IP concerns
+- `model_hallucination` - Likelihood of AI errors
+</Accordion>
+</AccordionGroup>
+
+## Step 4: Try a Code Assessment
+
+For more accurate assessments of code changes, use the context endpoint:
+
+<CodeGroup>
+```python Python
+import requests
+import os
+
+API_KEY = os.environ.get('ORCHO_API_KEY')
+
+response = requests.post(
+    'https://api.orcho.ai/api/v1/generate-risk-with-context',
+    headers={
+        'Authorization': f'Bearer {API_KEY}',
+        'Content-Type': 'application/json'
+    },
+    json={
+        'prompt': 'Add rate limiting to the API endpoints',
+        'context': {
+            'repo_full_name': 'mycompany/api-server',
+            'current_file': 'src/middleware/rate_limiter.py',
+            'other_files': [
+                'src/config/limits.py',
+                'tests/test_rate_limiting.py'
+            ]
+        }
+    }
+)
+
+result = response.json()
+
+# Display results
+print(f"Risk Score: {result['overall_score']}")
+print(f"Risk Level: {result['overall_risk_level']}")
+print(f"\nRecommendations:")
+for rec in result['recommendations']:
+    print(f"  - {rec}")
+
+# Check blast radius
+if 'blast_radius' in result['scores']:
+    print(f"\nBlast Radius Score: {result['scores']['blast_radius']}")
+    if 'affected_files' in result['computations']['blast_radius']:
+        files = result['computations']['blast_radius']['affected_files']
+        print(f"Affected Files: {files}")
+```
+
+```javascript JavaScript
+const API_KEY = process.env.ORCHO_API_KEY;
+
+const response = await fetch('https://api.orcho.ai/api/v1/generate-risk-with-context', {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${API_KEY}`,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    prompt: 'Add rate limiting to the API endpoints',
+    context: {
+      repo_full_name: 'mycompany/api-server',
+      current_file: 'src/middleware/rate_limiter.py',
+      other_files: [
+        'src/config/limits.py',
+        'tests/test_rate_limiting.py'
+      ]
+    }
+  })
+});
+
+const result = await response.json();
+
+console.log(`Risk Score: ${result.overall_score}`);
+console.log(`Risk Level: ${result.overall_risk_level}`);
+console.log('\nRecommendations:');
+result.recommendations.forEach(rec => console.log(`  - ${rec}`));
+
+// Check blast radius
+if (result.scores.blast_radius) {
+  console.log(`\nBlast Radius Score: ${result.scores.blast_radius}`);
+  if (result.computations.blast_radius.affected_files) {
+    console.log(`Affected Files: ${result.computations.blast_radius.affected_files}`);
+  }
+}
+```
+</CodeGroup>
+
+## Step 5: Implement Decision Logic
+
+Use the risk scores to make automated decisions:
+
+<Tabs>
+<Tab title="Simple Threshold">
+```python
+def should_proceed(risk_score):
+    """Basic threshold-based decision"""
+    if risk_score < 25:
+        return True, "Automatically approved"
+    elif risk_score < 50:
+        return True, "Approved with monitoring"
+    elif risk_score < 75:
+        return False, "Requires review"
+    else:
+        return False, "Blocked - critical risk"
+
+result = assess_risk(prompt)
+approved, reason = should_proceed(result['overall_score'])
+
+if approved:
+    execute_task()
+else:
+    request_manual_review(reason)
+```
+</Tab>
+
+<Tab title="Multi-factor Decision">
+```python
+def evaluate_risk(result):
+    """More sophisticated decision logic"""
+    score = result['overall_score']
+    scores = result['scores']
+    
+    # Block if any critical factors are too high
+    if scores.get('data_sensitivity', 0) > 80:
+        return False, "Sensitive data detected"
+    
+    if scores.get('blast_radius', 0) > 75:
+        return False, "Impact too widespread"
+    
+    # Allow low risk
+    if score < 30:
+        return True, "Low risk approved"
+    
+    # Medium risk - check for mitigating factors
+    if score < 60:
+        if scores.get('input_clarity', 100) < 40:
+            return True, "Clear instructions, moderate risk"
+        return False, "Requires clarification"
+    
+    # High risk requires review
+    return False, "High risk - manual review required"
+
+result = assess_risk_with_context(prompt, context)
+approved, reason = evaluate_risk(result)
+```
+</Tab>
+
+<Tab title="Environment-based">
+```python
+def should_deploy(risk_score, environment):
+    """Environment-specific thresholds"""
+    thresholds = {
+        'development': 75,   # More permissive
+        'staging': 50,       # Moderate
+        'production': 25     # Strict
+    }
+    
+    threshold = thresholds.get(environment, 25)
+    
+    if risk_score <= threshold:
+        return True, f"Approved for {environment}"
+    else:
+        return False, f"Risk score {risk_score} exceeds {environment} threshold {threshold}"
+
+result = assess_risk(prompt)
+approved, reason = should_deploy(result['overall_score'], 'production')
+```
+</Tab>
+</Tabs>
+
+## Common Use Cases
+
+<CardGroup cols={2}>
+<Card title="Pre-commit Validation" icon="git" href="#pre-commit-hooks">
+Check code changes before commits
+</Card>
+
+<Card title="CI/CD Gating" icon="code-branch" href="#cicd-integration">
+Automated deployment risk checks
+</Card>
+
+<Card title="Prompt Screening" icon="shield-check" href="#prompt-validation">
+Validate AI prompts before execution
+</Card>
+
+<Card title="Code Review Assist" icon="magnifying-glass" href="#code-review">
+Prioritize high-risk pull requests
+</Card>
+</CardGroup>
+
+## Next Steps
+
+<Steps>
+<Step title="Explore the API reference">
+Learn about all available endpoints and parameters in the [API Reference](/api-reference/introduction).
+</Step>
+
+<Step title="Set up dependency graphs">
+Configure dependency graphs for your repositories to enable blast radius calculations. Contact support for setup assistance.
+</Step>
+
+<Step title="Customize risk weights">
+Adjust risk factor weights based on your specific use case and risk tolerance. See [Generate Risk Score](/api-reference/generate-risk) for details.
+</Step>
+
+<Step title="Integrate with your workflow">
+Add risk assessment to your CI/CD pipeline, pre-commit hooks, or code review process.
+</Step>
+</Steps>
+
+## Best Practices
+
+<Tip>
+**Store API keys securely**: Use environment variables or secure secret management systems. Never commit keys to version control.
+</Tip>
+
+<Tip>
+**Start with low-risk tests**: Test the API with non-production prompts first to understand the scoring before integrating into critical workflows.
+</Tip>
+
+<Tip>
+**Review recommendations**: The `recommendations` array provides actionable steps. Don't just look at the score—implement the suggestions.
+</Tip>
+
+<Tip>
+**Adjust thresholds**: Different environments and use cases require different risk tolerances. Start conservative and adjust based on experience.
+</Tip>
+
+<Tip>
+**Monitor and iterate**: Track risk scores over time to identify patterns and refine your risk management strategy.
+</Tip>
+
+## Troubleshooting
+
+<AccordionGroup>
+<Accordion title="401 Unauthorized Error">
+Check that your API key is valid and properly formatted in the Authorization header:
+
+```
+Authorization: Bearer YOUR_API_KEY
+```
+
+Make sure there's a space after "Bearer" and no extra characters.
+</Accordion>
+
+<Accordion title="Repository Not Found">
+For the context endpoint, ensure:
+- The repository name is in `owner/repo` format
+- The repository's dependency graph has been loaded
+- You have access to the repository
+
+Contact support to set up dependency graphs for new repositories.
+</Accordion>
+
+<Accordion title="Rate Limit Exceeded">
+If you hit rate limits:
+- Implement exponential backoff in your retry logic
+- Batch requests during off-peak hours
+- Contact support for higher rate limits
+</Accordion>
+
+<Accordion title="Unexpected Risk Scores">
+If scores seem off:
+- Verify you're providing complete context for code assessments
+- Check that custom weights sum to 1.0
+- Review the `computations` object for detailed scoring rationale
+- Ensure prompts are clear and complete
+</Accordion>
+</AccordionGroup>
+
+## Support
+
+Need help getting started?
+
+<CardGroup cols={2}>
+<Card title="API Documentation" icon="book" href="/api-reference/introduction">
+Complete API reference
+</Card>
+
+<Card title="Email Support" icon="envelope" href="mailto:support@orcho.ai">
+support@orcho.ai
+</Card>
+
+<Card title="GitHub Examples" icon="github" href="https://github.com/orcho/examples">
+Sample integrations and code
+</Card>
+
+<Card title="Status Page" icon="signal" href="https://status.orcho.ai">
+API status and uptime
+</Card>
+</CardGroup>
