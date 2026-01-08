@@ -225,7 +225,7 @@ curl -X POST 'https://app.orcho.ai/risk/api/v1/generate-risk-with-context' \
 ```python Python
 import requests
 
-url = 'https://api.orcho.ai/api/v1/generate-risk-with-context'
+url = 'https://api.orcho.ai/risk/api/v1/generate-risk-with-context'
 headers = {
     'Authorization': 'Bearer YOUR_API_KEY',
     'Content-Type': 'application/json'
@@ -258,7 +258,7 @@ result = response.json()
 
 
 ```javascript JavaScript
-const response = await fetch('https://api.orcho.ai/api/v1/generate-risk-with-context', {
+const response = await fetch('https://api.orcho.ai/risk/api/v1/generate-risk-with-context', {
   method: 'POST',
   headers: {
     'Authorization': 'Bearer YOUR_API_KEY',
@@ -551,7 +551,7 @@ Blast radius measures how many parts of your codebase could be affected by chang
     
     def assess_risk(file_path, prompt):
         response = requests.post(
-            'https://app.orcho.ai/api/v1/generate-risk-with-context',
+            'https://app.orcho.ai/risk/api/v1/generate-risk-with-context',
             headers={
                 'Authorization': f'Bearer {API_KEY}',
                 'Content-Type': 'application/json'
@@ -602,7 +602,7 @@ Blast radius measures how many parts of your codebase could be affected by chang
           - name: Assess risk
             run: |
               for file in $(echo '${{ steps.files.outputs.files }}' | jq -r '.[]'); do
-                response=$(curl -X POST 'https://api.orcho.ai/api/v1/generate-risk-with-context' \
+                response=$(curl -X POST 'https://api.orcho.ai/risk/api/v1/generate-risk-with-context' \
                   -H 'Authorization: Bearer ${{ secrets.ORCHO_API_KEY }}' \
                   -H 'Content-Type: application/json' \
                   -d "{
@@ -632,7 +632,7 @@ Blast radius measures how many parts of your codebase could be affected by chang
         
         for change in changes:
             result = requests.post(
-                'https://api.orcho.ai/api/v1/generate-risk-with-context',
+                'https://api.orcho.ai/risk/api/v1/generate-risk-with-context',
                 headers={
                     'Authorization': f'Bearer {API_KEY}',
                     'Content-Type': 'application/json'
