@@ -44,33 +44,23 @@
         "tab": "API Reference",
         "groups": [
           {
-            "group": "Risk Assessment",
+            "group": "Getting Started",
             "pages": [
-              "api-reference/risk/generate",
-              "api-reference/risk/history"
+              "api-reference/introduction",
+              "api-reference/quickstart"
             ]
           },
           {
-            "group": "Dependency Graphs",
+            "group": "Risk Assessment Endpoints",
             "pages": [
-              "api-reference/dependency-graph/generate",
-              "api-reference/dependency-graph/view",
-              "api-reference/dependency-graph/list"
+              "api-reference/generate-risk",
+              "api-reference/generate-risk-with-context"
             ]
           },
           {
-            "group": "AI Ignore",
+            "group": "Resources",
             "pages": [
-              "api-reference/aiignore/add",
-              "api-reference/aiignore/delete",
-              "api-reference/aiignore/get"
-            ]
-          },
-          {
-            "group": "Feature Weights",
-            "pages": [
-              "api-reference/features/update-weight",
-              "api-reference/features/get-weights"
+              "api-reference/error-handling"
             ]
           }
         ]
@@ -110,13 +100,13 @@
   },
   "contextual": {
     "options": [
-     "copy",
-     "view",
-     "chatgpt",
-     "claude",
-     "cursor",
-     "vscode"
-   ]
+      "copy",
+      "view",
+      "chatgpt",
+      "claude",
+      "cursor",
+      "vscode"
+    ]
   },
   "footer": {
     "socials": {

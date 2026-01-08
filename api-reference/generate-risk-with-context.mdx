@@ -55,33 +55,46 @@ Code context information for dependency and impact analysis.
 </ParamField>
 
 <ParamField body="weights" type="object">
-Optional custom weights for each risk factor. All weights should sum to 1.0.
+Optional custom weights for each risk factor. All weights should sum to 1.0. If not provided, default weights are used.
+
+**Current default weights:**
+- `data_sensitivity`: 0.20 (20%)
+- `input_clarity`: 0.40 (40%)
+- `blast_radius`: 0.40 (40%)
+
+<Note>
+Only the three risk factors listed above are currently active. Additional factors (context_complexity, legal_ip_risk, model_hallucination) are planned for future releases.
+</Note>
 
 <Expandable title="Weight Configuration">
-  <ParamField body="weights.data_sensitivity" type="number" default="0.2">
-  Weight for data sensitivity score (0-1)
+  <ParamField body="weights.data_sensitivity" type="number" default="0.20">
+  Weight for data sensitivity score (0-1). Currently active.
   </ParamField>
   
-  <ParamField body="weights.input_clarity" type="number" default="0.15">
-  Weight for input clarity score (0-1)
+  <ParamField body="weights.input_clarity" type="number" default="0.40">
+  Weight for input clarity score (0-1). Currently active.
   </ParamField>
   
-  <ParamField body="weights.blast_radius" type="number" default="0.2">
-  Weight for blast radius score (0-1)
+  <ParamField body="weights.blast_radius" type="number" default="0.40">
+  Weight for blast radius score (0-1). Currently active.
   </ParamField>
   
-  <ParamField body="weights.context_complexity" type="number" default="0.15">
-  Weight for context complexity score (0-1)
+  <ParamField body="weights.context_complexity" type="number">
+  Weight for context complexity score (0-1). Coming in future release.
   </ParamField>
   
-  <ParamField body="weights.legal_ip_risk" type="number" default="0.15">
-  Weight for legal/IP risk score (0-1)
+  <ParamField body="weights.legal_ip_risk" type="number">
+  Weight for legal/IP risk score (0-1). Coming in future release.
   </ParamField>
   
-  <ParamField body="weights.model_hallucination" type="number" default="0.15">
-  Weight for model hallucination risk score (0-1)
+  <ParamField body="weights.model_hallucination" type="number">
+  Weight for model hallucination risk score (0-1). Coming in future release.
   </ParamField>
 </Expandable>
+
+<Warning>
+If some risk factors cannot be computed, the API automatically redistributes weights among available factors. The response includes both `weights` (actual used) and `original_weights` (your provided values).
+</Warning>
 </ParamField>
 
 ## Response
@@ -95,45 +108,48 @@ ISO 8601 formatted timestamp of when the assessment was performed
 </ResponseField>
 
 <ResponseField name="overall_score" type="number" required>
-Aggregate risk score from 0-100, where higher values indicate greater risk
+Aggregate risk score from **0.0 to 1.0** (decimal), where higher values indicate greater risk. Example: 0.65 means high risk.
 </ResponseField>
 
 <ResponseField name="overall_risk_level" type="string" required>
-Risk classification: `"low"`, `"medium"`, `"high"`, or `"critical"`
+Risk classification: `"minimal"`, `"low"`, `"medium"`, `"high"`, or `"critical"`
+
+- `"minimal"`: score < 0.2
+- `"low"`: 0.2 ≤ score < 0.4
+- `"medium"`: 0.4 ≤ score < 0.6
+- `"high"`: 0.6 ≤ score < 0.8
+- `"critical"`: score ≥ 0.8
 </ResponseField>
 
 <ResponseField name="recommendations" type="array" required>
-List of actionable recommendations based on identified risks
+List of action recommendations based on risk level:
+- `"SAFE - Minimal risk"`
+- `"MONITOR - Low risk"`
+- `"REVIEW_RECOMMENDED - Some risk factors detected"`
+- `"REVIEW_REQUIRED - Significant risk factors present"`
+- `"BLOCK - High risk detected"`
 </ResponseField>
 
 <ResponseField name="scores" type="object" required>
-Breakdown of individual risk factor scores
+Individual risk factor scores (0.0-1.0). **Only includes successfully computed factors.**
 
 <Expandable title="Risk Factor Scores">
   <ResponseField name="scores.data_sensitivity" type="number">
-  Score for data sensitivity (0-100)
+  Data sensitivity score (0.0-1.0)
   </ResponseField>
   
   <ResponseField name="scores.input_clarity" type="number">
-  Score for input clarity (0-100)
+  Input clarity score (0.0-1.0)
   </ResponseField>
   
   <ResponseField name="scores.blast_radius" type="number">
-  Score for blast radius based on dependency analysis (0-100)
-  </ResponseField>
-  
-  <ResponseField name="scores.context_complexity" type="number">
-  Score for context complexity based on files and dependencies (0-100)
-  </ResponseField>
-  
-  <ResponseField name="scores.legal_ip_risk" type="number">
-  Score for legal/IP risk (0-100)
-  </ResponseField>
-  
-  <ResponseField name="scores.model_hallucination" type="number">
-  Score for model hallucination risk (0-100)
+  Blast radius score (0.0-1.0) based on dependency analysis
   </ResponseField>
 </Expandable>
+
+<Note>
+Unavailable risk factors are not included in the scores object. Currently, only data_sensitivity, input_clarity, and blast_radius are active.
+</Note>
 </ResponseField>
 
 <ResponseField name="computations" type="object" required>
@@ -145,45 +161,38 @@ Detailed computation results for each risk factor including reasoning, evidence,
   
   <Expandable title="Blast Radius Object">
     <ResponseField name="computations.blast_radius.score" type="number">
-    Blast radius score (0-100)
-    </ResponseField>
-    
-    <ResponseField name="computations.blast_radius.affected_files" type="number">
-    Number of files potentially impacted
-    </ResponseField>
-    
-    <ResponseField name="computations.blast_radius.dependency_depth" type="number">
-    Maximum depth of dependency chain
+    Blast radius score (0.0-1.0)
     </ResponseField>
     
     <ResponseField name="computations.blast_radius.reasoning" type="string">
-    Explanation of blast radius calculation
+    Explanation of blast radius calculation (if available from computation module)
     </ResponseField>
   </Expandable>
   </ResponseField>
   
-  <ResponseField name="computations.context_complexity" type="object">
-  Context complexity analysis
+  <ResponseField name="computations.data_sensitivity" type="object">
+  Data sensitivity analysis with score, risk_level, reasoning, and evidence
+  </ResponseField>
   
-  <Expandable title="Context Complexity Object">
-    <ResponseField name="computations.context_complexity.score" type="number">
-    Context complexity score (0-100)
-    </ResponseField>
-    
-    <ResponseField name="computations.context_complexity.total_files" type="number">
-    Total number of files in context
-    </ResponseField>
-    
-    <ResponseField name="computations.context_complexity.reasoning" type="string">
-    Explanation of complexity assessment
-    </ResponseField>
-  </Expandable>
+  <ResponseField name="computations.input_clarity" type="object">
+  Input clarity analysis with score and suggestions array
   </ResponseField>
 </Expandable>
 </ResponseField>
 
 <ResponseField name="weights" type="object" required>
-The weights used in the calculation (either provided or default values)
+The **actual weights used** in calculation after any automatic redistribution. May differ from `original_weights` if some factors were unavailable.
+
+<Note>
+When factors are unavailable, weights are redistributed:
+- 1 factor: gets 100%
+- 2 factors: 65% and 35%
+- 3 factors: 65%, 25%, and 10%
+</Note>
+</ResponseField>
+
+<ResponseField name="original_weights" type="object" required>
+The weights you provided (or defaults) before any redistribution. Use this to compare against `weights` to see if redistribution occurred.
 </ResponseField>
 
 <ResponseField name="prompt" type="string" required>
@@ -196,6 +205,16 @@ The file being modified
 
 <ResponseField name="repo_full_name" type="string" required>
 The repository containing the file
+</ResponseField>
+
+<ResponseField name="available_parameters" type="array">
+List of parameter names that were successfully computed and included in the weighted score. Only present if some parameters were unavailable.
+</ResponseField>
+
+<ResponseField name="unavailable_parameters" type="object">
+Map of parameter names to reason strings explaining why they couldn't be computed. Only present if some parameters were unavailable.
+
+Example: `{"context_complexity": "module not available"}`
 </ResponseField>
 
 ## Example Request
@@ -218,11 +237,8 @@ curl -X POST 'https://api.orcho.ai/api/v1/generate-risk-with-context' \
     },
     "weights": {
       "data_sensitivity": 0.25,
-      "input_clarity": 0.15,
-      "blast_radius": 0.25,
-      "context_complexity": 0.15,
-      "legal_ip_risk": 0.1,
-      "model_hallucination": 0.1
+      "input_clarity": 0.35,
+      "blast_radius": 0.40
     }
   }'
 ```
@@ -301,70 +317,48 @@ const result = await response.json();
 {
   "success": true,
   "timestamp": "2025-01-08T15:45:00Z",
-  "overall_score": 52.3,
+  "prompt": "Refactor the authentication middleware to support JWT tokens",
+  "current_file": "middleware/auth.py",
+  "repo_full_name": "company/api-gateway",
+  "overall_score": 0.5230,
   "overall_risk_level": "high",
   "recommendations": [
-    "Review all 47 dependent files before making changes",
-    "Ensure backward compatibility with existing authentication",
-    "Add comprehensive tests for JWT validation",
-    "Update documentation for API consumers",
-    "Consider feature flag for gradual rollout",
-    "Require code review from security team"
+    "REVIEW_REQUIRED - Significant risk factors present"
   ],
   "scores": {
-    "data_sensitivity": 45,
-    "input_clarity": 35,
-    "blast_radius": 72,
-    "context_complexity": 58,
-    "legal_ip_risk": 20,
-    "model_hallucination": 42
+    "data_sensitivity": 0.45,
+    "input_clarity": 0.35,
+    "blast_radius": 0.72
   },
   "computations": {
     "data_sensitivity": {
-      "score": 45,
+      "score": 0.45,
+      "risk_level": "medium",
       "reasoning": "Authentication middleware handles sensitive user credentials and session data",
       "evidence": ["Password handling", "Session tokens", "User authentication"]
     },
     "input_clarity": {
-      "score": 35,
-      "reasoning": "Prompt is clear but missing implementation details",
-      "evidence": ["No JWT library specified", "No migration strategy", "Backward compatibility not addressed"]
+      "score": 0.35,
+      "suggestions": [
+        "Specify JWT library to use",
+        "Define migration strategy",
+        "Address backward compatibility"
+      ]
     },
     "blast_radius": {
-      "score": 72,
-      "reasoning": "Authentication middleware is used by 47 files across the codebase",
-      "affected_files": 47,
-      "dependency_depth": 4,
-      "evidence": ["47 dependent files", "4 levels of dependencies", "Core authentication component"]
-    },
-    "context_complexity": {
-      "score": 58,
-      "reasoning": "Moderate complexity with multiple related files and authentication logic",
-      "total_files": 4,
-      "evidence": ["Multiple authentication methods", "Configuration dependencies", "Test coverage"]
-    },
-    "legal_ip_risk": {
-      "score": 20,
-      "reasoning": "JWT implementation may require license compliance",
-      "evidence": ["JWT library licensing", "Authentication patents"]
-    },
-    "model_hallucination": {
-      "score": 42,
-      "reasoning": "Security-sensitive task with potential for implementation errors",
-      "evidence": ["Authentication logic", "Cryptographic operations", "Security best practices"]
+      "score": 0.72
     }
   },
   "weights": {
-    "data_sensitivity": 0.25,
-    "input_clarity": 0.15,
-    "blast_radius": 0.25,
-    "context_complexity": 0.15,
-    "legal_ip_risk": 0.1,
-    "model_hallucination": 0.1
+    "data_sensitivity": 0.10,
+    "input_clarity": 0.25,
+    "blast_radius": 0.65
   },
-  "prompt": "Refactor the authentication middleware to support JWT tokens",
-  "current_file": "middleware/auth.py",
-  "repo_full_name": "company/api-gateway"
+  "original_weights": {
+    "data_sensitivity": 0.20,
+    "input_clarity": 0.40,
+    "blast_radius": 0.40
+  }
 }
 ```
 
@@ -372,45 +366,44 @@ const result = await response.json();
 {
   "success": true,
   "timestamp": "2025-01-08T15:50:00Z",
-  "overall_score": 18.7,
-  "overall_risk_level": "low",
+  "prompt": "Add docstrings to the string utility functions",
+  "current_file": "utils/string_helpers.py",
+  "repo_full_name": "company/shared-utils",
+  "overall_score": 0.1870,
+  "overall_risk_level": "minimal",
   "recommendations": [
-    "Verify test coverage after adding docstrings",
-    "Ensure docstring format matches project standards",
-    "Update any generated documentation"
+    "SAFE - Minimal risk"
   ],
   "scores": {
-    "data_sensitivity": 5,
-    "input_clarity": 15,
-    "blast_radius": 12,
-    "context_complexity": 22,
-    "legal_ip_risk": 8,
-    "model_hallucination": 25
+    "data_sensitivity": 0.05,
+    "input_clarity": 0.15,
+    "blast_radius": 0.12
   },
   "computations": {
-    "blast_radius": {
-      "score": 12,
-      "reasoning": "Utility function with minimal dependencies",
-      "affected_files": 3,
-      "dependency_depth": 1
+    "data_sensitivity": {
+      "score": 0.05,
+      "risk_level": "minimal"
     },
-    "context_complexity": {
-      "score": 22,
-      "reasoning": "Simple utility function with clear purpose",
-      "total_files": 2
+    "input_clarity": {
+      "score": 0.15,
+      "suggestions": [
+        "Ensure docstring format matches project standards"
+      ]
+    },
+    "blast_radius": {
+      "score": 0.12
     }
   },
   "weights": {
-    "data_sensitivity": 0.2,
-    "input_clarity": 0.15,
-    "blast_radius": 0.2,
-    "context_complexity": 0.15,
-    "legal_ip_risk": 0.15,
-    "model_hallucination": 0.15
+    "data_sensitivity": 0.10,
+    "input_clarity": 0.25,
+    "blast_radius": 0.65
   },
-  "prompt": "Add docstrings to the string utility functions",
-  "current_file": "utils/string_helpers.py",
-  "repo_full_name": "company/shared-utils"
+  "original_weights": {
+    "data_sensitivity": 0.20,
+    "input_clarity": 0.40,
+    "blast_radius": 0.40
+  }
 }
 ```
 
@@ -494,55 +487,61 @@ Example of good context:
 </Accordion>
 
 <Accordion title="Interpreting blast radius">
-Blast radius scores indicate potential impact:
+Blast radius scores indicate potential impact on a 0.0-1.0 scale:
 
-- **0-20**: Isolated changes with minimal dependencies
-- **21-40**: Moderate impact on related components
-- **41-60**: Significant impact across multiple modules
-- **61-80**: High impact on core functionality
-- **81-100**: Critical changes affecting major systems
+- **0.0 - 0.2**: Isolated changes with minimal dependencies
+- **0.21 - 0.4**: Moderate impact on related components
+- **0.41 - 0.6**: Significant impact across multiple modules
+- **0.61 - 0.8**: High impact on core functionality
+- **0.81 - 1.0**: Critical changes affecting major systems
 
-Consider the `affected_files` and `dependency_depth` metrics in the computations object for detailed analysis.
+The blast radius score is the criticality score of the most critical file being modified. Higher scores indicate files that are heavily depended upon by other parts of the codebase.
 </Accordion>
 
 <Accordion title="Custom weights for code changes">
-Adjust weights based on your risk tolerance:
+Adjust weights based on your risk tolerance. Default weights:
+- `data_sensitivity`: 0.20 (20%)
+- `input_clarity`: 0.40 (40%)
+- `blast_radius`: 0.40 (40%)
 
 **High-risk production systems:**
 ```json
 {
-  "blast_radius": 0.3,
-  "data_sensitivity": 0.25,
-  "context_complexity": 0.2,
-  "input_clarity": 0.1,
-  "legal_ip_risk": 0.1,
-  "model_hallucination": 0.05
+  "blast_radius": 0.5,
+  "data_sensitivity": 0.3,
+  "input_clarity": 0.2
 }
 ```
 
 **Experimental features:**
 ```json
 {
-  "blast_radius": 0.15,
-  "data_sensitivity": 0.15,
-  "context_complexity": 0.15,
-  "input_clarity": 0.2,
-  "legal_ip_risk": 0.1,
-  "model_hallucination": 0.25
+  "blast_radius": 0.3,
+  "data_sensitivity": 0.3,
+  "input_clarity": 0.4
+}
+```
+
+**Security-focused:**
+```json
+{
+  "data_sensitivity": 0.5,
+  "blast_radius": 0.3,
+  "input_clarity": 0.2
 }
 ```
 </Accordion>
 
 <Accordion title="Handling high-risk scores">
-When you receive high-risk scores (>50):
+When you receive high-risk scores (≥ 0.6):
 
-1. **Review recommendations carefully**: Each recommendation addresses specific risks
-2. **Consider manual review**: High scores indicate changes that warrant human oversight
+1. **Review recommendations**: Check the `recommendations` field for the risk level assessment
+2. **Consider manual review**: High scores (0.6-0.79) and critical scores (≥ 0.8) warrant human oversight
 3. **Implement safeguards**: Add feature flags, canary deployments, or rollback procedures
 4. **Break down changes**: Split large changes into smaller, lower-risk modifications
 5. **Improve context**: Provide more detailed prompts and additional context files
 
-Never ignore high-risk scores in production environments.
+Never ignore high-risk scores (≥ 0.6) in production environments.
 </Accordion>
 </AccordionGroup>
 
@@ -585,8 +584,8 @@ def assess_risk(file_path, prompt):
 for file_path in get_changed_files():
     result = assess_risk(file_path, f'Modifying {file_path}')
     
-    if result['overall_score'] > 75:
-        print(f'HIGH RISK: {file_path} (score: {result["overall_score"]})')
+    if result['overall_score'] > 0.75:
+        print(f'HIGH RISK: {file_path} (score: {result["overall_score"]:.2f})')
         print('Recommendations:')
         for rec in result['recommendations']:
             print(f'  - {rec}')
@@ -630,7 +629,7 @@ jobs:
               }")
             
             score=$(echo $response | jq '.overall_score')
-            if [ $(echo "$score > 50" | bc) -eq 1 ]; then
+            if (( $(echo "$score > 0.5" | bc -l) )); then
               echo "::warning file=$file::High risk score: $score"
             fi
           done
@@ -645,7 +644,7 @@ def gate_deployment(environment, changes):
     """Gate deployment based on risk assessment"""
     
     # Higher thresholds for production
-    threshold = 75 if environment == 'production' else 50
+    threshold = 0.75 if environment == 'production' else 0.5
     
     for change in changes:
         result = requests.post(
@@ -662,12 +661,9 @@ def gate_deployment(environment, changes):
                     'other_files': change.get('related_files', [])
                 },
                 'weights': {
-                    'blast_radius': 0.3,
-                    'data_sensitivity': 0.25,
-                    'context_complexity': 0.2,
-                    'input_clarity': 0.1,
-                    'legal_ip_risk': 0.1,
-                    'model_hallucination': 0.05
+                    'blast_radius': 0.5,
+                    'data_sensitivity': 0.3,
+                    'input_clarity': 0.2
                 }
             }
         ).json()
@@ -675,7 +671,7 @@ def gate_deployment(environment, changes):
         if result['overall_score'] > threshold:
             return {
                 'approved': False,
-                'reason': f'Risk score {result["overall_score"]} exceeds threshold',
+                'reason': f'Risk score {result["overall_score"]:.2f} exceeds threshold {threshold}',
                 'recommendations': result['recommendations']
             }
     

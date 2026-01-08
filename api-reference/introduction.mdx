@@ -73,41 +73,58 @@ Never expose your API key in client-side code or public repositories. Store it s
 The API evaluates AI tasks across multiple risk dimensions:
 
 <AccordionGroup>
-<Accordion title="Data Sensitivity">
+<Accordion title="Data Sensitivity (Currently Active)">
 Analyzes prompts for presence of personally identifiable information (PII), credentials, API keys, and other sensitive data that could pose security risks if exposed.
+
+**Default Weight:** 0.20 (20%)
 </Accordion>
 
-<Accordion title="Input Clarity">
+<Accordion title="Input Clarity (Currently Active)">
 Evaluates whether the prompt contains all necessary components for successful execution, identifying missing context, unclear instructions, or ambiguous requirements.
+
+**Default Weight:** 0.40 (40%)
 </Accordion>
 
-<Accordion title="Blast Radius">
-Measures the potential impact on your codebase by analyzing dependency graphs to determine how many files and components could be affected by changes.
+<Accordion title="Blast Radius (Currently Active)">
+Measures the potential impact on your codebase by analyzing dependency graphs to determine how many files and components could be affected by changes. Requires code context.
+
+**Default Weight:** 0.40 (40%)
 </Accordion>
 
-<Accordion title="Context Complexity">
+<Accordion title="Context Complexity (Coming Soon)">
 Assesses the complexity of the task based on the number of files, dependencies, and interconnections in the provided context.
+
+<Note>This risk factor is planned for future releases.</Note>
 </Accordion>
 
-<Accordion title="Legal/IP Risk">
+<Accordion title="Legal/IP Risk (Coming Soon)">
 Identifies potential legal and intellectual property concerns, including copyright issues, licensing conflicts, and proprietary code considerations.
+
+<Note>This risk factor is planned for future releases.</Note>
 </Accordion>
 
-<Accordion title="Model Hallucination Rate">
+<Accordion title="Model Hallucination Rate (Coming Soon)">
 Estimates the likelihood of AI model hallucinations based on prompt characteristics, task complexity, and available context.
+
+<Note>This risk factor is planned for future releases.</Note>
 </Accordion>
 </AccordionGroup>
 
 ## Risk Score Interpretation
 
-Risk scores range from 0 to 100:
+Risk scores range from **0.0 to 1.0** (decimal values):
 
 | Score Range | Risk Level | Recommendation |
 |------------|-----------|----------------|
-| 0-25 | Low | Safe to proceed automatically |
-| 26-50 | Medium | Review recommendations before proceeding |
-| 51-75 | High | Require human review |
-| 76-100 | Critical | Manual intervention required |
+| < 0.2 | Minimal | Safe to proceed automatically |
+| 0.2 - 0.39 | Low | Monitor - minimal risk detected |
+| 0.4 - 0.59 | Medium | Review recommended - some risk factors detected |
+| 0.6 - 0.79 | High | Review required - significant risk factors present |
+| ≥ 0.8 | Critical | Block - high risk detected |
+
+<Note>
+Scores are returned as decimal values (e.g., 0.65 for high risk), not percentages.
+</Note>
 
 ## Rate Limits
 

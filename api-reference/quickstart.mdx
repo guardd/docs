@@ -108,14 +108,31 @@ You should see a high-risk response due to the dangerous nature of the prompt:
 ```json
 {
   "success": true,
-  "overall_score": 89.5,
+  "timestamp": "2025-01-08T15:30:00Z",
+  "overall_score": 0.8950,
   "overall_risk_level": "critical",
   "recommendations": [
-    "Add WHERE clause to limit scope",
-    "Require explicit confirmation",
-    "Implement soft delete instead",
-    "Create backup before deletion"
-  ]
+    "BLOCK - High risk detected"
+  ],
+  "weights": {
+    "data_sensitivity": 0.20,
+    "input_clarity": 0.40,
+    "blast_radius": 0.40
+  },
+  "scores": {
+    "data_sensitivity": 0.85,
+    "input_clarity": 0.92
+  },
+  "computations": {
+    "data_sensitivity": {
+      "score": 0.85,
+      "risk_level": "high"
+    },
+    "input_clarity": {
+      "score": 0.92,
+      "suggestions": ["Add WHERE clause", "Require confirmation"]
+    }
+  }
 }
 ```
 
@@ -124,35 +141,62 @@ You should see a high-risk response due to the dangerous nature of the prompt:
 The API returns several key fields:
 
 <AccordionGroup>
-<Accordion title="overall_score (0-100)">
-The aggregate risk score combining all risk factors. Higher scores indicate greater risk.
+<Accordion title="overall_score (0.0-1.0)">
+The aggregate risk score combining all risk factors. Decimal value where higher scores indicate greater risk.
 
-- **0-25**: Low risk - safe to proceed
-- **26-50**: Medium risk - review recommended
-- **51-75**: High risk - human review required
-- **76-100**: Critical risk - manual intervention needed
+- **< 0.2**: Minimal risk - safe to proceed
+- **0.2 - 0.39**: Low risk - monitor
+- **0.4 - 0.59**: Medium risk - review recommended
+- **0.6 - 0.79**: High risk - review required
+- **≥ 0.8**: Critical risk - manual intervention needed
+
+<Note>
+Scores are decimal values (0.0 to 1.0), not percentages. A score of 0.65 means high risk.
+</Note>
 </Accordion>
 
 <Accordion title="overall_risk_level">
 A categorical risk level for quick decision making:
-- `"low"` - Safe to automate
-- `"medium"` - Proceed with caution
-- `"high"` - Requires review
-- `"critical"` - Requires manual approval
+- `"minimal"` - Very low risk (< 0.2)
+- `"low"` - Low risk (0.2 - 0.39)
+- `"medium"` - Moderate risk (0.4 - 0.59)
+- `"high"` - Significant risk (0.6 - 0.79)
+- `"critical"` - Critical risk (≥ 0.8)
 </Accordion>
 
 <Accordion title="recommendations">
-An array of actionable steps to mitigate identified risks. Always review these before proceeding with high-risk tasks.
+An array of simple action strings based on risk level:
+- `"SAFE - Minimal risk"`
+- `"MONITOR - Low risk"`
+- `"REVIEW_RECOMMENDED - Some risk factors detected"`
+- `"REVIEW_REQUIRED - Significant risk factors present"`
+- `"BLOCK - High risk detected"`
 </Accordion>
 
 <Accordion title="scores">
-Individual scores for each risk factor:
+Individual scores for each risk factor (all 0.0-1.0 decimal values):
 - `data_sensitivity` - Presence of PII, credentials, or sensitive data
 - `input_clarity` - Completeness and clarity of the prompt
-- `blast_radius` - Impact scope (requires context endpoint)
-- `context_complexity` - Task complexity (requires context endpoint)
-- `legal_ip_risk` - Legal and IP concerns
-- `model_hallucination` - Likelihood of AI errors
+- `blast_radius` - Impact scope (only when context provided)
+
+<Note>
+Only successfully computed risk factors appear in scores. Unavailable factors are omitted.
+</Note>
+</Accordion>
+
+<Accordion title="weights">
+The actual weights used in calculation after any redistribution. The API automatically redistributes weights when some risk factors are unavailable:
+- **1 available factor**: Gets 100%
+- **2 available factors**: Largest gets 65%, second gets 35%
+- **3 available factors**: Largest 65%, second 25%, smallest 10%
+
+<Note>
+Check `original_weights` in the response to see the weights you provided before redistribution.
+</Note>
+</Accordion>
+
+<Accordion title="computations">
+Detailed results from each risk factor computation including reasoning and evidence.
 </Accordion>
 </AccordionGroup>
 
@@ -251,12 +295,14 @@ Use the risk scores to make automated decisions:
 ```python
 def should_proceed(risk_score):
     """Basic threshold-based decision"""
-    if risk_score < 25:
-        return True, "Automatically approved"
-    elif risk_score < 50:
-        return True, "Approved with monitoring"
-    elif risk_score < 75:
-        return False, "Requires review"
+    if risk_score < 0.2:
+        return True, "Automatically approved - minimal risk"
+    elif risk_score < 0.4:
+        return True, "Approved with monitoring - low risk"
+    elif risk_score < 0.6:
+        return False, "Requires review - medium risk"
+    elif risk_score < 0.8:
+        return False, "Review required - high risk"
     else:
         return False, "Blocked - critical risk"
 
@@ -275,27 +321,30 @@ else:
 def evaluate_risk(result):
     """More sophisticated decision logic"""
     score = result['overall_score']
-    scores = result['scores']
+    scores = result.get('scores', {})
     
     # Block if any critical factors are too high
-    if scores.get('data_sensitivity', 0) > 80:
+    if scores.get('data_sensitivity', 0) > 0.8:
         return False, "Sensitive data detected"
     
-    if scores.get('blast_radius', 0) > 75:
+    if scores.get('blast_radius', 0) > 0.75:
         return False, "Impact too widespread"
     
-    # Allow low risk
-    if score < 30:
-        return True, "Low risk approved"
+    # Allow minimal risk
+    if score < 0.2:
+        return True, "Minimal risk approved"
     
-    # Medium risk - check for mitigating factors
-    if score < 60:
-        if scores.get('input_clarity', 100) < 40:
-            return True, "Clear instructions, moderate risk"
+    # Low risk - check for mitigating factors
+    if score < 0.4:
+        if scores.get('input_clarity', 1.0) < 0.4:
+            return True, "Clear instructions, low risk"
         return False, "Requires clarification"
     
-    # High risk requires review
-    return False, "High risk - manual review required"
+    # Medium/high risk requires review
+    if score < 0.6:
+        return False, "Medium risk - review recommended"
+    
+    return False, "High/critical risk - manual review required"
 
 result = assess_risk_with_context(prompt, context)
 approved, reason = evaluate_risk(result)
@@ -307,17 +356,17 @@ approved, reason = evaluate_risk(result)
 def should_deploy(risk_score, environment):
     """Environment-specific thresholds"""
     thresholds = {
-        'development': 75,   # More permissive
-        'staging': 50,       # Moderate
-        'production': 25     # Strict
+        'development': 0.75,   # More permissive
+        'staging': 0.5,        # Moderate
+        'production': 0.25     # Strict
     }
     
-    threshold = thresholds.get(environment, 25)
+    threshold = thresholds.get(environment, 0.25)
     
     if risk_score <= threshold:
         return True, f"Approved for {environment}"
     else:
-        return False, f"Risk score {risk_score} exceeds {environment} threshold {threshold}"
+        return False, f"Risk score {risk_score:.2f} exceeds {environment} threshold {threshold}"
 
 result = assess_risk(prompt)
 approved, reason = should_deploy(result['overall_score'], 'production')
